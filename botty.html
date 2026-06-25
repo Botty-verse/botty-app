@@ -1,0 +1,2676 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Botty — de NOLAI Tamagotchi</title>
+<meta name="theme-color" content="#1a5c4a" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://botty.ramonmoorlag.nl/" />
+<meta property="og:title" content="Botty — de NOLAI AI-tamagotchi" />
+<meta property="og:description" content="Verzorg Botty met duurzame data, denk samen na over ethische dilemma's en ontdek de niveaus van automatisering." />
+<meta property="og:image" content="https://moorlag.github.io/Kortebroeken/social-preview.jpg" />
+<meta property="og:image:width" content="1280" />
+<meta property="og:image:height" content="640" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Botty — de NOLAI AI-tamagotchi" />
+<meta name="twitter:description" content="Verzorg Botty met duurzame data, denk samen na over ethische dilemma's en ontdek de niveaus van automatisering." />
+<meta name="twitter:image" content="https://moorlag.github.io/Kortebroeken/social-preview.jpg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --rood:#b52718;
+    --groen:#1a5c4a;
+    --bg:#f5f9f7;
+    --teal:#2f8f86;
+    --broek:#57b85f;
+    --broek-rand:#2e6b34;
+    --crème:#fbfbf2;
+    --donker:#2b2b2b;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    min-height:100vh;
+    font-family:'Nunito',sans-serif;
+    background:radial-gradient(circle at 50% 0%, #ffffff 0%, var(--bg) 60%);
+    color:var(--groen);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:1.5rem 1rem 3rem;
+  }
+  .logo{font-size:11px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:var(--rood);margin-bottom:.4rem;text-align:center;}
+  h1{font-size:26px;font-weight:900;color:var(--groen);margin-bottom:.1rem;text-align:center;}
+  .ondertitel{font-size:14px;font-weight:400;color:#5a7d72;margin-bottom:1rem;text-align:center;}
+
+  .toestel{
+    width:100%;max-width:420px;
+    background:linear-gradient(160deg,#ffffff,#eef6f2);
+    border:3px solid var(--groen);
+    border-radius:32px;
+    padding:1.1rem 1.1rem 1.3rem;
+    box-shadow:0 18px 40px rgba(26,92,74,.18), inset 0 2px 0 #fff;
+  }
+
+  /* ---- Leeftijd / generatie ---- */
+  .leefbalk{display:flex;justify-content:space-between;align-items:center;
+    font-size:12px;font-weight:900;color:var(--groen);margin-bottom:.6rem;
+    background:#eaf4ef;border:1.5px solid #d2e7dd;border-radius:12px;padding:.35rem .7rem;}
+  .leefbalk .gen{color:var(--teal);text-transform:uppercase;letter-spacing:.05em;}
+
+  /* ---- Stats ---- */
+  .stats{display:grid;grid-template-columns:1fr 1fr;gap:.5rem .7rem;margin-bottom:.7rem;}
+  .stat{font-size:12px;font-weight:700;}
+  .stat .rij{display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;}
+  .balk{height:9px;border-radius:6px;background:#dfe9e4;overflow:hidden;}
+  .balk > span{display:block;height:100%;border-radius:6px;transition:width .5s ease, background .4s;}
+  .b-data > span{background:linear-gradient(90deg,#3a9d94,#2f8f86);}
+  .b-fit  > span{background:linear-gradient(90deg,#7fd06f,#57b85f);}
+  .b-geluk> span{background:linear-gradient(90deg,#ffce54,#f6a623);}
+  .b-wijs > span{background:linear-gradient(90deg,#a98be0,#7b5bc4);}
+  .b-energie>span{background:linear-gradient(90deg,#5ec6ff,#2f9fe0);}
+  .b-band>span{background:linear-gradient(90deg,#ff9cb6,#e0556b);}
+  .stat-vol{font-size:12px;font-weight:700;margin-bottom:.6rem;}
+  .stat-vol .rij{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;}
+  .stat-vol .balk{height:13px;}
+
+  /* ---- Scène ---- */
+  .scene{position:relative;height:300px;border-radius:22px;overflow:hidden;
+    margin-bottom:.7rem;border:2px solid #cfe6dc;
+    background:linear-gradient(180deg,#86c8ff 0%,#bfe6ff 45%,#e9f8ef 100%);
+    transition:background 1.5s ease;}
+
+  /* sterren (nacht) */
+  .sterren{position:absolute;inset:0;opacity:0;transition:opacity 1.5s ease;pointer-events:none;}
+  .sterren.toon{opacity:1;}
+  .ster{position:absolute;width:2px;height:2px;border-radius:50%;background:#fff;
+    animation:twinkel 3s ease-in-out infinite;}
+  @keyframes twinkel{0%,100%{opacity:.2;}50%{opacity:1;}}
+
+  /* zon & maan */
+  .hemellichaam{position:absolute;border-radius:50%;transform:translate(-50%,-50%);
+    transition:left 1.5s ease, top 1.5s ease, opacity 1s ease;will-change:left,top;}
+  .zon{width:46px;height:46px;background:radial-gradient(circle,#fff3b0,#ffd54a);
+    box-shadow:0 0 30px 6px #ffe27a;}
+  .maan{width:38px;height:38px;background:radial-gradient(circle at 38% 35%,#ffffff,#dfe6f0);
+    box-shadow:0 0 22px 3px rgba(220,230,245,.6);opacity:0;}
+
+  /* wolken */
+  .wolk{position:absolute;background:#fff;border-radius:50px;opacity:.85;transition:opacity 1.5s ease;}
+  .wolk::before,.wolk::after{content:"";position:absolute;background:#fff;border-radius:50%;}
+  .wolk-a{width:58px;height:18px;top:42px;left:-90px;animation:drijf 52s linear infinite;}
+  .wolk-a::before{width:26px;height:26px;top:-12px;left:9px;}
+  .wolk-a::after{width:20px;height:20px;top:-8px;left:33px;}
+  .wolk-b{width:44px;height:14px;top:78px;left:-150px;animation:drijf 74s linear infinite 8s;}
+  .wolk-b::before{width:20px;height:20px;top:-10px;left:7px;}
+  .wolk-b::after{width:15px;height:15px;top:-6px;left:25px;}
+  @keyframes drijf{from{transform:translateX(0);}to{transform:translateX(600px);}}
+  .scene.nacht .wolk{opacity:.2;}
+
+  /* vogels heel ver in de verte */
+  .vogels{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
+  .zwerm{position:absolute;display:flex;gap:7px;opacity:.45;}
+  .zwerm.rechts{animation:vlieg-r linear forwards;}
+  .zwerm.links{animation:vlieg-l linear forwards;}
+  @keyframes vlieg-r{from{transform:translateX(-50px);}to{transform:translateX(460px);}}
+  @keyframes vlieg-l{from{transform:translateX(460px) scaleX(-1);}to{transform:translateX(-50px) scaleX(-1);}}
+  .vogel{width:9px;height:6px;animation:flap .5s ease-in-out infinite;}
+  .vogel svg{width:100%;height:100%;display:block;}
+  @keyframes flap{0%,100%{transform:scaleY(1);}50%{transform:scaleY(.45);}}
+
+  /* heuvels achter de bomen */
+  .heuvels{position:absolute;left:0;right:0;bottom:42px;height:56px;opacity:.9;
+    background:radial-gradient(120% 100% at 28% 100%, #a9dcb4 0 60%, transparent 61%),
+               radial-gradient(120% 100% at 72% 100%, #9ed6aa 0 55%, transparent 56%);}
+
+  /* bomen met schaduw */
+  .bomen{position:absolute;inset:0;pointer-events:none;}
+  .boom{position:absolute;bottom:42px;width:34px;height:54px;}
+  .boom-1{left:13%;transform:scale(.85);}
+  .boom-2{left:33%;transform:scale(.55);bottom:48px;}
+  .boom-3{left:84%;transform:scale(.95);}
+  .boom .stam{position:absolute;bottom:0;left:50%;width:6px;height:22px;margin-left:-3px;background:#9c6b3f;border-radius:3px;}
+  .boom .kruin{position:absolute;bottom:15px;left:50%;width:34px;height:38px;margin-left:-17px;
+    background:radial-gradient(circle at 40% 35%, #5fb86a, #3f9150);border-radius:50%;}
+  .boom .boom-schaduw{position:absolute;bottom:-3px;left:50%;width:28px;height:8px;margin-left:-14px;
+    background:rgba(38,66,44,.45);border-radius:50%;opacity:0;transform-origin:center;
+    transition:transform 1.5s ease, opacity 1.5s ease;}
+
+  .vloer{position:absolute;left:0;right:0;bottom:0;height:42px;
+    background:linear-gradient(180deg,#bfe8c7,#9ed6aa);border-top:2px solid #84c490;}
+
+  .botty-wrap{position:absolute;left:50%;bottom:30px;width:170px;cursor:pointer;transition:left .9s ease;}
+  .botty-wrap svg{width:100%;height:auto;display:block;overflow:visible;
+    transform:scale(var(--groei,1));transform-origin:50% 100%;transition:transform 1s ease, filter .5s ease;}
+
+  /* ---- Op bezoek: gastheer schuift naar links, de gast loopt rechts in beeld ---- */
+  .scene.op-bezoek #botty{left:30%;}
+  .scene.op-bezoek #ballon{left:30%;}            /* host-ballon volgt de host */
+  .gast{left:118%;}                 /* start buiten beeld; JS zet 'm op zijn plek */
+  .scene.op-bezoek .gast{left:70%;}
+  /* smallere ballonnen tijdens een bezoek, zodat ze elkaar niet overlappen */
+  .scene.op-bezoek #ballon,.gast-ballon{max-width:150px;font-size:11px;padding:.4rem .6rem;}
+  .gast-naam{position:absolute;left:50%;bottom:8px;transform:translateX(-50%);
+    background:var(--groen);color:#fff;font-weight:900;font-size:11px;white-space:nowrap;
+    padding:2px 9px;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,.18);}
+
+  .ballon{position:absolute;left:50%;top:10px;transform:translateX(-50%);
+    background:#fff;border:2px solid var(--groen);border-radius:16px;
+    padding:.45rem .7rem;font-size:12.5px;font-weight:700;color:var(--groen);
+    max-width:240px;text-align:center;line-height:1.25;
+    box-shadow:0 4px 12px rgba(0,0,0,.12);opacity:0;transition:opacity .3s;pointer-events:none;}
+  .ballon.toon{opacity:1;}
+  .ballon::after{content:"";position:absolute;left:50%;bottom:-9px;transform:translateX(-50%);
+    border-left:8px solid transparent;border-right:8px solid transparent;border-top:9px solid var(--groen);}
+
+  .floater{position:absolute;font-weight:900;font-size:18px;pointer-events:none;
+    animation:zweef 1.1s ease-out forwards;}
+  @keyframes zweef{from{opacity:1;transform:translateY(0);}to{opacity:0;transform:translateY(-46px);}}
+
+  /* ---- Knoppen ---- */
+  .knoppen{display:grid;grid-template-columns:repeat(3,1fr);gap:.55rem;}
+  button{-webkit-tap-highlight-color:transparent;}
+  :focus-visible{outline:3px solid #1a5c4a;outline-offset:2px;border-radius:4px;}   /* zichtbare focus voor toetsenbord */
+  button.actie{font-family:inherit;font-weight:900;font-size:13px;cursor:pointer;
+    position:relative;
+    border:none;border-radius:16px;padding:.7rem .3rem;color:#fff;
+    display:flex;flex-direction:column;align-items:center;gap:.2rem;
+    touch-action:manipulation;user-select:none;
+    box-shadow:0 4px 0 rgba(0,0,0,.15);transition:transform .08s, box-shadow .08s, filter .2s;}
+  button.actie .ico{font-size:22px;line-height:1;}
+  /* Sneltoets-hint rechtsboven op de actieknoppen (1/2/3) */
+  .toets-hint{position:absolute;top:4px;right:6px;font-size:10px;font-weight:900;line-height:14px;
+    min-width:14px;text-align:center;padding:0 3px;border-radius:5px;background:rgba(255,255,255,.28);}
+  /* Klein toetsnummer rechtsonderin op voer-kaarten en dilemma-keuzes */
+  .toets-nr{position:absolute;bottom:5px;right:7px;font-size:10px;font-weight:900;color:#2f8f86;opacity:.8;}
+  /* Toets-aanduiding op de herstelknop */
+  .toets-kbd{font-family:inherit;font-size:10px;font-weight:900;background:rgba(255,255,255,.3);
+    border-radius:5px;padding:0 4px;margin-left:2px;}
+  button.actie:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.15);}
+  button.actie:disabled{filter:grayscale(.5) opacity(.6);cursor:default;}
+  .k-voer{background:var(--teal);}
+  .k-beweeg{background:var(--broek);}
+  .k-dilemma{background:var(--rood);}
+
+  /* ---- AI-assistent ---- */
+  .ai-knop{position:relative;font-size:14px!important;line-height:1;transition:transform .12s, box-shadow .2s, border-color .2s;}
+  .ai-badge{position:absolute;top:-5px;right:-4px;min-width:14px;height:14px;line-height:13px;padding:0 2px;
+    font-size:9px;font-weight:900;color:#fff;background:#1f6f9e;border:1.5px solid #fff;border-radius:8px;display:none;}
+  .ai-knop.aan .ai-badge{display:block;}
+  .ai-knop.aan{
+    border-color:transparent!important;color:#fff!important;
+    background:linear-gradient(90deg,#5ec6ff,#57b85f,#f6a623,#e0556b,#7b5bc4,#5ec6ff);
+    background-size:300% 100%;
+    animation:ai-vloei 4s linear infinite, ai-puls 1.9s ease-in-out infinite;
+    box-shadow:0 0 0 2px rgba(94,198,255,.35);}
+  @keyframes ai-vloei{from{background-position:0% 50%;}to{background-position:300% 50%;}}
+  @keyframes ai-puls{0%,100%{transform:scale(1);}50%{transform:scale(1.12);}}
+  .botty-wrap.ai-zorg svg{animation:ai-gloed 1.9s ease-in-out infinite;}
+  @keyframes ai-gloed{0%,100%{filter:drop-shadow(0 0 3px #5ec6ff);}50%{filter:drop-shadow(0 0 9px #5ec6ff);}}
+  .ai-druk{animation:ai-druk .7s ease;}
+  @keyframes ai-druk{0%,100%{box-shadow:0 4px 0 rgba(0,0,0,.15);}50%{box-shadow:0 0 0 4px rgba(94,198,255,.9), 0 4px 0 rgba(0,0,0,.15);}}
+
+  /* ---- AI-niveau-paneel (schuif) ---- */
+  .ai-slider-wrap{margin:.4rem 0 .2rem;}
+  #ai-slider{width:100%;-webkit-appearance:none;appearance:none;height:8px;border-radius:6px;outline:none;
+    background:linear-gradient(90deg,#57b85f,#5ec6ff,#7b5bc4);}
+  #ai-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:50%;
+    background:#fff;border:3px solid #2f9fe0;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.25);}
+  #ai-slider::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:#fff;border:3px solid #2f9fe0;cursor:pointer;}
+  .ai-slider-ticks{display:flex;justify-content:space-between;margin-top:.4rem;}
+  .ai-slider-ticks span{font-size:10px;font-weight:900;color:#5a7d72;flex:1;text-align:center;transition:color .15s;}
+  .ai-slider-ticks span:first-child{text-align:left;}
+  .ai-slider-ticks span:last-child{text-align:right;}
+  .ai-slider-ticks span.actief{color:#2f9fe0;}
+  .ai-niv-info{background:#eaf6ff;border:2px solid #cde6f5;border-radius:14px;padding:.7rem .8rem;margin-top:.7rem;}
+  .ai-niv-tag2{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.03em;color:#2f9fe0;}
+  .ai-niv-titel{font-size:15px;font-weight:900;color:var(--groen);margin-bottom:.2rem;}
+  .ai-niv-uitleg2{font-size:13px;font-weight:700;color:#41685c;line-height:1.35;}
+  .ai-niv-band{font-size:12px;font-weight:900;color:#7b5bc4;margin-top:.45rem;}
+
+  /* ---- Uitlegbare AI toggle ---- */
+  .xai-rij{display:flex;align-items:center;gap:.6rem;margin:.5rem 0 .4rem;padding:.45rem .7rem;
+    background:#f0f7f0;border:1.5px solid #cde6d8;border-radius:12px;cursor:pointer;}
+  .xai-lbl{font-size:13px;font-weight:700;color:var(--groen);flex:1;line-height:1.2;cursor:pointer;}
+  .xai-lbl small{display:block;font-size:11px;font-weight:400;color:#5a7d72;margin-top:2px;}
+  .toggle-sw{position:relative;display:inline-block;width:40px;height:22px;flex-shrink:0;}
+  .toggle-sw input{opacity:0;width:0;height:0;position:absolute;}
+  .toggle-sw .toggle-track{position:absolute;inset:0;border-radius:11px;background:#c5d8ce;transition:background .2s;cursor:pointer;}
+  .toggle-sw .toggle-track::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;
+    border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.22);}
+  .toggle-sw input:checked + .toggle-track{background:#2f9fe0;}
+  .toggle-sw input:checked + .toggle-track::after{transform:translateX(18px);}
+
+  /* ---- Modals ---- */
+  .overlay{position:fixed;inset:0;background:rgba(26,92,74,.45);display:none;
+    align-items:center;justify-content:center;padding:1rem;z-index:50;}
+  .overlay.open{display:flex;}
+  .modal{background:#fff;border-radius:24px;max-width:420px;width:100%;
+    padding:1.3rem 1.2rem;box-shadow:0 20px 50px rgba(0,0,0,.3);
+    animation:pop .35s cubic-bezier(.34,1.56,.64,1) both;}
+  @keyframes pop{from{transform:scale(.7);opacity:0;}to{transform:scale(1);opacity:1;}}
+  .modal h2{font-size:18px;color:var(--rood);margin-bottom:.2rem;}
+  .modal .vraag{font-size:15px;color:var(--groen);margin-bottom:.9rem;line-height:1.35;font-weight:700;}
+  .keuzes{display:flex;flex-direction:column;gap:.5rem;}
+  .keuze{font-family:inherit;text-align:left;font-size:14px;font-weight:700;color:var(--groen);
+    position:relative;
+    background:#f1f7f4;border:2px solid #d7e8e0;border-radius:14px;padding:.6rem 1.8rem .6rem .8rem;cursor:pointer;
+    transition:background .15s,border-color .15s,transform .08s;}
+  .keuze:hover{background:#e3f1ea;border-color:var(--teal);}
+  .keuze:active{transform:scale(.98);}
+  .reactie{font-size:14px;color:var(--groen);line-height:1.4;margin:.4rem 0 1rem;font-weight:700;}
+  .reactie .label{display:inline-block;font-size:11px;font-weight:900;text-transform:uppercase;
+    letter-spacing:.05em;padding:.15rem .5rem;border-radius:8px;color:#fff;margin-bottom:.4rem;}
+
+  .kaarten{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:.4rem;}
+  .voerkaart{font-family:inherit;width:100%;display:block;position:relative;border:2px solid #d7e8e0;border-radius:14px;padding:.6rem;cursor:pointer;
+    background:#f8fcfa;text-align:center;transition:transform .1s,border-color .15s,opacity .3s;}
+  .voerkaart:focus-visible{outline:3px solid var(--teal);outline-offset:2px;}
+  .voerkaart:hover{transform:translateY(-3px);border-color:var(--teal);}
+  .voerkaart .em{font-size:26px;display:block;margin-bottom:.2rem;}
+  .voerkaart .nm{font-size:12px;font-weight:700;color:var(--groen);line-height:1.2;}
+  .voerkaart.weg{opacity:0;pointer-events:none;}
+  .sluit{margin-top:.8rem;width:100%;font-family:inherit;font-weight:900;font-size:14px;cursor:pointer;
+    background:var(--groen);color:#fff;border:none;border-radius:14px;padding:.7rem;}
+  .hint{font-size:12px;color:#476156;text-align:center;margin-top:.5rem;font-weight:700;}
+
+  .terug{margin-top:1.2rem;font-size:13px;font-weight:700;color:var(--teal);text-decoration:none;}
+  .terug:hover{text-decoration:underline;}
+
+  /* ---- Geboorte ---- */
+  #overlay-geboorte{background:radial-gradient(circle at 50% 35%, #ffffff, #cdeede 70%, #a9ddc3 100%);}
+  .geboorte-inhoud{text-align:center;max-width:340px;}
+  .geboorte-titel{font-size:22px;font-weight:900;color:var(--groen);margin-bottom:.3rem;}
+  .geboorte-titel.groot{font-size:26px;color:var(--rood);}
+  .geboorte-gen{font-size:14px;font-weight:900;color:var(--teal);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem;}
+  .geboorte-hint{font-size:14px;font-weight:700;color:#5a7d72;margin-top:.4rem;}
+  .geboorte-sub{font-size:14px;font-weight:700;color:var(--groen);margin:.6rem 0 0;line-height:1.4;}
+  .naam-input{width:100%;font-family:inherit;font-weight:700;font-size:15px;color:var(--groen);
+    text-align:center;border:2px solid var(--teal);border-radius:14px;padding:.6rem;margin-top:.7rem;
+    outline:none;background:#fff;}
+  .naam-input::placeholder{color:#9bbab0;font-weight:400;}
+  .bouw-wrap{width:170px;margin:1rem auto;}
+  .bouw-wrap svg{width:100%;height:auto;overflow:visible;}
+  .start-ai{background:var(--rood)!important;letter-spacing:.05em;}
+  /* losse onderdelen die samenklikken tot Botty */
+  #bouw-botty .bp{transform-box:fill-box;transform-origin:center;
+    transition:transform .8s cubic-bezier(.34,1.45,.5,1), opacity .5s ease;opacity:.92;}
+  #bouw-botty .bp-leg-l{transform:translate(-24px,56px) rotate(48deg);}
+  #bouw-botty .bp-leg-r{transform:translate(26px,54px) rotate(-52deg);}
+  #bouw-botty .bp-shorts{transform:translate(-40px,46px) rotate(-16deg);}
+  #bouw-botty .bp-torso{transform:translate(28px,38px) rotate(13deg);}
+  #bouw-botty .bp-arm-l{transform:translate(-58px,42px) rotate(72deg);}
+  #bouw-botty .bp-arm-r{transform:translate(58px,26px) rotate(-68deg);}
+  #bouw-botty .bp-neck{transform:translate(-28px,44px) rotate(38deg);opacity:.7;}
+  #bouw-botty .bp-kop{transform:translate(38px,-18px) rotate(-16deg);}
+  #bouw-botty .bp-ear-l{transform:translate(-58px,-22px) rotate(28deg);}
+  #bouw-botty .bp-ear-r{transform:translate(62px,8px) rotate(-32deg);}
+  #bouw-botty .bp-antenne{transform:translate(-48px,40px) rotate(-58deg);}
+  /* nadat START AI is gedrukt: alles klikt op z'n plek (van onder naar boven) */
+  #bouw-botty.gebouwd .bp{transform:none;opacity:1;}
+  #bouw-botty.gebouwd .bp-leg-l,#bouw-botty.gebouwd .bp-leg-r,#bouw-botty.gebouwd .bp-shorts{transition-delay:0s;}
+  #bouw-botty.gebouwd .bp-torso,#bouw-botty.gebouwd .bp-arm-l,#bouw-botty.gebouwd .bp-arm-r{transition-delay:.12s;}
+  #bouw-botty.gebouwd .bp-neck{transition-delay:.24s;}
+  #bouw-botty.gebouwd .bp-kop{transition-delay:.34s;}
+  #bouw-botty.gebouwd .bp-ear-l,#bouw-botty.gebouwd .bp-ear-r{transition-delay:.46s;}
+  #bouw-botty.gebouwd .bp-antenne{transition-delay:.58s;}
+
+  /* =================== BOTTY ANIMATIES =================== */
+  /* idle: rustig ademen */
+  .botty-wrap{animation:adem 3.4s ease-in-out infinite;transform:translateX(-50%);}
+  @keyframes adem{0%,100%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(-5px);}}
+
+  /* correcte scharnierpunten in SVG-coördinaten */
+  #antenne{transform-box:view-box;transform-origin:100px 46px;animation:wieber 3.4s ease-in-out infinite;}
+  @keyframes wieber{0%,100%{transform:rotate(-5deg);}50%{transform:rotate(5deg);}}
+  #arm-r{transform-box:view-box;transform-origin:134px 156px;transition:transform .35s ease;}
+  #arm-l{transform-box:view-box;transform-origin:66px 156px;transition:transform .35s ease;}
+  #been-r{transform-box:view-box;transform-origin:114px 212px;transition:transform .3s ease;}
+  #been-l{transform-box:view-box;transform-origin:86px 212px;transition:transform .3s ease;}
+  #kop{transform-box:view-box;transform-origin:100px 124px;transition:transform .35s ease;}
+
+  /* eten: hapjes naar de mond + kauwen */
+  .botty-wrap.eet #arm-r{animation:eet-arm .7s ease-in-out 4;}
+  @keyframes eet-arm{0%,100%{transform:rotate(0);}50%{transform:rotate(-80deg);}}
+  .botty-wrap.eet #kop{animation:eet-kop .7s ease-in-out 4;}
+  @keyframes eet-kop{0%,100%{transform:rotate(0) translateY(0);}50%{transform:rotate(3deg) translateY(2px);}}
+
+  /* bewegen: jumping jack met sprong */
+  .botty-wrap.beweeg{animation:spring .6s ease-in-out 5;}
+  @keyframes spring{0%,100%{transform:translateX(-50%) translateY(0);}45%{transform:translateX(-50%) translateY(-30px);}}
+  .botty-wrap.beweeg #arm-r{animation:jj-r .6s ease-in-out 5;}
+  @keyframes jj-r{0%,100%{transform:rotate(0);}45%{transform:rotate(-150deg);}}
+  .botty-wrap.beweeg #arm-l{animation:jj-l .6s ease-in-out 5;}
+  @keyframes jj-l{0%,100%{transform:rotate(0);}45%{transform:rotate(150deg);}}
+  .botty-wrap.beweeg #been-r{animation:jj-br .6s ease-in-out 5;}
+  @keyframes jj-br{0%,100%{transform:rotate(0);}45%{transform:rotate(-15deg);}}
+  .botty-wrap.beweeg #been-l{animation:jj-bl .6s ease-in-out 5;}
+  @keyframes jj-bl{0%,100%{transform:rotate(0);}45%{transform:rotate(15deg);}}
+
+  /* blij: juichen met sprongetjes */
+  .botty-wrap.blij{animation:huppel .5s ease-in-out 4;}
+  @keyframes huppel{0%,100%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(-22px);}}
+  .botty-wrap.blij #arm-r{animation:vier-r .5s ease-in-out 4;}
+  @keyframes vier-r{0%,100%{transform:rotate(0);}50%{transform:rotate(-160deg);}}
+  .botty-wrap.blij #arm-l{animation:vier-l .5s ease-in-out 4;}
+  @keyframes vier-l{0%,100%{transform:rotate(0);}50%{transform:rotate(160deg);}}
+
+  /* nadenken: hand aan de kin + tollende antenne (statisch tot keuze) */
+  .botty-wrap.denk #arm-r{transform:rotate(-98deg);}
+  .botty-wrap.denk #kop{transform:rotate(-4deg);}
+  .botty-wrap.denk #antenne{animation:antenne-denk .6s ease-in-out infinite;}
+  @keyframes antenne-denk{0%,100%{transform:rotate(-13deg);}50%{transform:rotate(13deg);}}
+
+  /* spontaan zwaaien */
+  .botty-wrap.wuif #arm-r{animation:wuif-arm 1.6s ease-in-out 1;}
+  @keyframes wuif-arm{0%{transform:rotate(0);}15%{transform:rotate(-150deg);}
+    30%{transform:rotate(-128deg);}45%{transform:rotate(-150deg);}
+    60%{transform:rotate(-128deg);}75%{transform:rotate(-150deg);}100%{transform:rotate(0);}}
+
+  /* spontaan rondkijken */
+  .botty-wrap.kijk #kop{animation:kijk-kop 2s ease-in-out 1;}
+  @keyframes kijk-kop{0%{transform:rotate(0);}25%{transform:rotate(-9deg);}
+    50%{transform:rotate(0);}75%{transform:rotate(9deg);}100%{transform:rotate(0);}}
+
+  /* verdrietig / hongerig: laat hangen */
+  .botty-wrap.sip{animation:none;transform:translateX(-50%) translateY(4px);}
+  .botty-wrap.sip #kop{transform:rotate(0) translateY(4px);}
+
+  /* knipperen + emotie-ogen */
+  #ogen{transform-box:view-box;transform-origin:100px 84px;animation:knipper 6s ease-in-out infinite;}
+  @keyframes knipper{0%,92%,100%{transform:scaleY(1);}96%{transform:scaleY(.1);}}
+  .botty-wrap.verliefd #ogen,.botty-wrap.slaap #ogen,.botty-wrap.verrast #ogen{display:none;}
+  #ogen-hart{transform-box:view-box;transform-origin:100px 82px;}
+  .botty-wrap.verliefd #ogen-hart{display:block!important;animation:hartklop .5s ease-in-out 3;}
+  @keyframes hartklop{0%,100%{transform:scale(1);}50%{transform:scale(1.18);}}
+  .botty-wrap.slaap #ogen-slaap{display:block!important;}
+  .botty-wrap.verrast #ogen-verrast{display:block!important;}
+
+  /* ---- Gezondheids- & leeftijdslook (volgt de verzorging) ---- */
+  /* Baby: korte, dikke antenne; kind: iets minder kort. Alle starts zien er als baby uit. */
+  .botty-wrap.baby-look #antenne{animation:wieber-baby 3.4s ease-in-out infinite;}
+  @keyframes wieber-baby{0%,100%{transform:scale(.6) rotate(-5deg);}50%{transform:scale(.6) rotate(5deg);}}
+  .botty-wrap.kind-look #antenne{animation:wieber-kind 3.4s ease-in-out infinite;}
+  @keyframes wieber-kind{0%,100%{transform:scale(.8) rotate(-5deg);}50%{transform:scale(.8) rotate(5deg);}}
+  /* Vitaal (gem. welzijn > 65): felle kleuren, zichtbare spierballetjes en een sprankel-antenne. */
+  .botty-wrap.vitaal svg{filter:saturate(1.3) brightness(1.06);}
+  .botty-wrap.vitaal .lk-spier,.botty-wrap.vitaal .lk-ster{display:block!important;}
+  /* Verwaarloosd (gem. welzijn < 35): roestfilter, roestvlekken, bocheltje en slappe antenne.
+     Staat ná baby/kind zodat de droop-antenne wint als beide klassen actief zijn. */
+  .botty-wrap.verwaarloosd svg{filter:saturate(.4) sepia(.4) brightness(.92);transform:scale(var(--groei,1)) rotate(2deg);}
+  .botty-wrap.verwaarloosd .lk-roest,.botty-wrap.verwaarloosd .lk-bochel{display:block!important;}
+  .botty-wrap.verwaarloosd #antenne{animation:none;transform:rotate(24deg);}
+  /* Baby-look: antenne pivoteert bij bovenkant groot chibi-hoofd */
+  .botty-wrap.baby-look #antenne{transform-origin:100px 8px;}
+  .botty-wrap.baby-look #been-l{transform-origin:88px 204px;}
+  .botty-wrap.baby-look #been-r{transform-origin:112px 204px;}
+  /* Tiener-look: heuppivots zitten lager door de langere benen */
+  .botty-wrap.tiener-look #been-l{transform-origin:86px 218px;}
+  .botty-wrap.tiener-look #been-r{transform-origin:114px 218px;}
+
+  /* ---- Bediening (help/delen/geluid) ---- */
+  .leef-rechts{display:flex;align-items:center;gap:.4rem;}
+  .icoon-knop{font-family:inherit;font-size:14px;line-height:1;cursor:pointer;border:1.5px solid #d2e7dd;
+    background:#fff;color:var(--groen);border-radius:9px;padding:.22rem .42rem;touch-action:manipulation;}
+  .icoon-knop:active{transform:scale(.9);}
+
+  /* ---- Juice ---- */
+  .toestel.schud{animation:schud .42s ease;}
+  @keyframes schud{0%,100%{transform:translateX(0);}20%{transform:translateX(-7px);}40%{transform:translateX(6px);}60%{transform:translateX(-4px);}80%{transform:translateX(3px);}}
+  .balk.flits>span{animation:flits .5s ease;}
+  @keyframes flits{0%,100%{filter:none;}40%{filter:brightness(1.45) saturate(1.3);}}
+
+  /* ---- Tutorial ---- */
+  .tut-emoji{font-size:42px;display:block;text-align:center;margin:.2rem 0 .5rem;}
+  #tut-tekst{white-space:pre-line;}   /* laat regelafbrekingen (\n) zien, bv. de niveau-ladder */
+  .tut-stippen{text-align:center;margin-top:.3rem;}
+  .tut-stip{display:inline-block;width:8px;height:8px;border-radius:50%;background:#cfe2da;margin:0 3px;}
+  .tut-stip.actief{background:var(--teal);}
+  .tut-nav{display:flex;gap:.5rem;margin-top:.9rem;}
+  .tut-nav .sluit{margin-top:0;}
+  .knop-licht{background:#eef6f2!important;color:var(--groen)!important;}
+
+  /* ---- Deelkaart ---- */
+  .deelkaart{background:linear-gradient(160deg,#ffffff,#e8f4ee);border:2px solid var(--groen);
+    border-radius:20px;padding:.9rem;text-align:center;}
+  .deelkaart .mini{width:110px;margin:0 auto .3rem;}
+  /* In de kaart staat Botty in een eigen .botty-wrap (voor de look-klassen); haal de
+     absolute positionering uit de live-layout weg zodat hij netjes in de kaart past. */
+  .deelkaart .mini .botty-wrap{position:static;left:auto;bottom:auto;width:100%;cursor:default;}
+  .deelkaart .mini svg{width:100%;height:auto;overflow:visible;}
+  .deelkaart .d-titel{font-weight:900;color:var(--rood);font-size:18px;}
+  .deelkaart .d-regels{font-size:13px;font-weight:700;color:var(--groen);margin-top:.3rem;line-height:1.5;}
+  .deel-acties{display:flex;gap:.5rem;}
+  .deel-acties .sluit{flex:1;}
+  /* Badge boven een gedeelde Botty (recipient opent een #b=-link) */
+  .deel-badge{font-weight:900;color:var(--groen);font-size:14px;margin-bottom:.7rem;}
+  .deel-badge small{display:block;font-weight:700;color:#6b7d76;font-size:11px;margin-top:.15rem;}
+  .toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%) translateY(10px);
+    background:var(--groen);color:#fff;font-weight:700;font-size:13px;padding:.5rem .9rem;
+    border-radius:12px;opacity:0;transition:opacity .3s,transform .3s;z-index:10000;pointer-events:none;}
+  .toast.toon{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  /* ---- Mobiel ---- */
+  @media (max-width:430px){
+    body{padding:1rem .7rem 2.4rem;}
+    h1{font-size:23px;}
+    .ondertitel{font-size:13px;}
+    .scene{height:264px;}
+  }
+  /* ---- Minder beweging ---- */
+  /* ---- Ziekte & levenseinde ---- */
+  .ziek-balk{display:flex;align-items:center;justify-content:center;gap:.5rem;
+    background:#fdecea;border:2px solid #e3a59b;color:#a5372a;font-weight:900;font-size:13px;
+    border-radius:14px;padding:.5rem .7rem;margin-bottom:.6rem;}
+  .ziek-balk button{font-family:inherit;font-weight:900;font-size:13px;cursor:pointer;border:none;
+    background:#c8472f;color:#fff;border-radius:10px;padding:.4rem .8rem;touch-action:manipulation;}
+  .botty-wrap.ziek-look svg{filter:saturate(.5) hue-rotate(35deg) brightness(.96);}
+  /* ---- Bezoek-balk (verschijnt als er een gast-Botty op bezoek is) ---- */
+  .bezoek-balk{display:flex;align-items:center;justify-content:center;gap:.5rem;flex-wrap:wrap;
+    background:#e8f6ef;border:2px solid #8fcbb5;color:var(--groen);font-weight:900;font-size:13px;
+    border-radius:14px;padding:.5rem .7rem;margin-bottom:.6rem;}
+  .bezoek-balk button{font-family:inherit;font-weight:900;font-size:13px;cursor:pointer;border:none;
+    background:var(--groen);color:#fff;border-radius:10px;padding:.4rem .8rem;touch-action:manipulation;}
+  .bezoek-balk button.licht{background:#cfe7db;color:var(--groen);}
+  .ziek-icoon{position:absolute;left:50%;top:42px;margin-left:18px;font-size:22px;display:none;z-index:5;
+    animation:zweef-ziek 2s ease-in-out infinite;}
+  @keyframes zweef-ziek{0%,100%{transform:translateY(0);}50%{transform:translateY(-5px);}}
+
+  #overlay-einde{background:radial-gradient(circle at 50% 35%, #3a3550, #1c1830 80%);}
+  .einde-inhoud{text-align:center;max-width:340px;color:#fff;}
+  .einde-inhoud .groot-emoji{font-size:56px;margin-bottom:.3rem;}
+  .einde-inhoud h2{color:#fff;font-size:24px;margin-bottom:.4rem;}
+  .einde-inhoud .sub{font-size:14px;font-weight:700;opacity:.92;margin-bottom:.5rem;line-height:1.45;}
+  .einde-reflectie{font-size:13px;font-weight:700;color:#fff;line-height:1.5;text-align:left;
+    background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:14px;
+    padding:.7rem .85rem;margin:.3rem 0 1rem;}
+
+  @media (prefers-reduced-motion: reduce){
+    .botty-wrap{animation:none!important;transform:translateX(-50%)!important;}
+    #antenne,.wolk,.ster,.vogel,.botty-wrap.ai-zorg svg,.ai-knop.aan{animation:none!important;}
+    .ai-knop.aan{background:#2f9fe0!important;transform:none!important;}
+    .scene,.hemellichaam,.boom-schaduw{transition:none!important;}
+    .ai-ticker .knip{animation:none!important;}
+  }
+
+  /* ===== Verse-look in lichte uitvoering: AI-ticker, micro-labels, panelen ===== */
+  /* Titel met zachte kleurverloop-gloed (Botty's eigen groenen) */
+  h1{
+    background:linear-gradient(90deg,#1a5c4a,#2f8f86,#1a5c4a);background-size:200% 100%;
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    text-shadow:0 2px 16px rgba(47,143,134,.16);
+  }
+  /* Micro-label boven een paneel — uppercase met letterspatiëring, zoals in de verse */
+  .micro-kop{width:100%;max-width:420px;margin:0 auto .35rem;
+    font-size:10.5px;font-weight:900;letter-spacing:.07em;text-transform:uppercase;color:var(--teal);
+    display:flex;align-items:center;gap:.5rem;}
+  .micro-kop::after{content:"";flex:1;height:1.5px;border-radius:2px;
+    background:linear-gradient(90deg,rgba(47,143,134,.35),transparent);}
+  /* AI-statusbalk met knipperende cursor — de ticker uit de verse */
+  .ai-ticker{width:100%;max-width:420px;margin:0 auto 1rem;
+    background:linear-gradient(160deg,#ffffff,#eef6f2);border:2px solid #cfe6dc;border-radius:14px;
+    font-size:12.5px;font-weight:700;color:var(--groen);padding:.5rem .85rem;min-height:2.15rem;
+    display:flex;align-items:center;justify-content:center;gap:.45rem;text-align:center;
+    box-shadow:0 6px 16px rgba(26,92,74,.07);}
+  .ai-ticker b{color:var(--teal);}
+  .ai-ticker .knip{color:var(--teal);font-weight:900;animation:knipper 1.05s step-end infinite;}
+  @keyframes knipper{0%,100%{opacity:1;}50%{opacity:0;}}
+  /* Het toestel krijgt de subtiele binnengloed van de verse-panelen */
+  .toestel{position:relative;}
+  .toestel::after{content:"";position:absolute;inset:0;border-radius:32px;pointer-events:none;
+    box-shadow:inset 0 0 26px rgba(47,143,134,.07);}
+  /* Footer als verse-paneel met micro-label */
+  .voet-paneel{width:100%;max-width:420px;margin:1.2rem auto 0;
+    background:linear-gradient(160deg,#ffffff,#eef6f2);border:2px solid #cfe6dc;border-radius:16px;
+    padding:.75rem .9rem;display:flex;flex-direction:column;gap:.5rem;align-items:center;
+    box-shadow:0 8px 20px rgba(26,92,74,.07);}
+  .voet-paneel .voet-kop{font-size:10.5px;font-weight:900;letter-spacing:.07em;text-transform:uppercase;color:var(--teal);}
+  .voet-paneel a.terug{margin-top:0;text-align:center;}
+  /* AI-spreekballon extra leesbaar: hoger contrast + zachte witrand over de scène */
+  .ballon{background:rgba(255,255,255,.97);color:#15403a;font-size:13px;
+    box-shadow:0 4px 14px rgba(0,0,0,.18),0 0 0 4px rgba(255,255,255,.4);}
+</style>
+</head>
+<body>
+  <p class="logo">NOLAI — Nationaal OnderwijsLab AI</p>
+  <h1>Botty</h1>
+  <p class="ondertitel">Voer haar duurzame data, laat haar bewegen en denk samen na.</p>
+
+  <div class="micro-kop" style="max-width:420px">AI-assistent</div>
+  <div class="ai-ticker" id="ai-ticker"><span class="knip">▌</span> AI-assistent staat uit — jij verzorgt Botty zelf.</div>
+
+  <main class="toestel">
+    <div class="leefbalk">
+      <span class="gen" id="leef-gen">Generatie 1</span>
+      <span class="leef-rechts">
+        <span id="leef-leeftijd">—</span>
+        <button class="icoon-knop" id="btn-help" aria-label="Uitleg" title="Uitleg">❔</button>
+        <button class="icoon-knop" id="btn-share" aria-label="Deel Botty" title="Deel Botty">📤</button>
+        <button class="icoon-knop" id="btn-mute" aria-label="Geluid aan of uit" title="Geluid aan/uit">🔊</button>
+        <button class="icoon-knop ai-knop" id="ai-toggle" aria-label="AI-assistent instellen" title="AI-assistent: uit">⚡<span class="ai-badge" id="ai-badge"></span></button>
+      </span>
+    </div>
+
+    <div class="stat-vol">
+      <div class="rij"><span>⚡ Energie</span><span id="t-energie">0%</span></div>
+      <div class="balk b-energie"><span id="bar-energie" style="width:0%"></span></div>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="rij"><span>💾 Data</span><span id="t-data">0%</span></div>
+        <div class="balk b-data"><span id="bar-data" style="width:0%"></span></div>
+      </div>
+      <div class="stat">
+        <div class="rij"><span>🏃 Fitheid</span><span id="t-fit">0%</span></div>
+        <div class="balk b-fit"><span id="bar-fit" style="width:0%"></span></div>
+      </div>
+      <div class="stat">
+        <div class="rij"><span>😊 Geluk</span><span id="t-geluk">0%</span></div>
+        <div class="balk b-geluk"><span id="bar-geluk" style="width:0%"></span></div>
+      </div>
+      <div class="stat">
+        <div class="rij"><span>🧠 Wijsheid</span><span id="t-wijs">0</span></div>
+        <div class="balk b-wijs"><span id="bar-wijs" style="width:0%"></span></div>
+      </div>
+    </div>
+
+    <div class="stat-vol">
+      <div class="rij"><span>❤️ Band met jou</span><span id="t-band">0%</span></div>
+      <div class="balk b-band"><span id="bar-band" style="width:0%"></span></div>
+    </div>
+
+    <div class="scene" id="scene">
+      <div class="sterren" id="sterren"></div>
+      <div class="hemellichaam zon" id="zon"></div>
+      <div class="hemellichaam maan" id="maan"></div>
+      <div class="wolk wolk-a"></div>
+      <div class="wolk wolk-b"></div>
+      <div class="vogels" id="vogels"></div>
+      <div class="heuvels"></div>
+      <div class="vloer"></div>
+      <div class="bomen" id="bomen">
+        <div class="boom boom-1"><div class="boom-schaduw"></div><div class="stam"></div><div class="kruin"></div></div>
+        <div class="boom boom-2"><div class="boom-schaduw"></div><div class="stam"></div><div class="kruin"></div></div>
+        <div class="boom boom-3"><div class="boom-schaduw"></div><div class="stam"></div><div class="kruin"></div></div>
+      </div>
+      <div class="ballon" id="ballon"></div>
+      <div class="ziek-icoon" id="ziek-icoon">🤒</div>
+      <div class="botty-wrap" id="botty">
+        <svg viewBox="0 0 200 250" aria-label="Botty de robot">
+          <g id="antenne">
+            <path d="M100,46 Q96,28 109,20" fill="none" stroke="#2b2b2b" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="111" cy="16" r="6.5" fill="#8c9196" stroke="#2b2b2b" stroke-width="2.5"/>
+            <path id="antenne-ster" class="lk-ster" d="M111,1 L112.4,5.6 117,7 112.4,8.4 111,13 109.6,8.4 105,7 109.6,5.6 Z" fill="#ffd54a" stroke="#f6a623" stroke-width="0.6" style="display:none"/>
+          </g>
+          <g id="been-l"><line x1="86" y1="212" x2="80" y2="236" stroke="#2b2b2b" stroke-width="4"/>
+            <ellipse cx="78" cy="239" rx="11" ry="6" fill="#fbfbf2" stroke="#2b2b2b" stroke-width="2.5"/></g>
+          <g id="been-r"><line x1="114" y1="212" x2="120" y2="236" stroke="#2b2b2b" stroke-width="4"/>
+            <ellipse cx="122" cy="239" rx="11" ry="6" fill="#fbfbf2" stroke="#2b2b2b" stroke-width="2.5"/></g>
+          <g id="arm-l"><line x1="66" y1="156" x2="36" y2="184" stroke="#2b2b2b" stroke-width="4"/>
+            <ellipse id="spier-l" class="lk-spier" cx="55" cy="166" rx="8" ry="6" fill="#57b85f" stroke="#2b2b2b" stroke-width="2" transform="rotate(-43 55 166)" style="display:none"/>
+            <circle cx="34" cy="187" r="6" fill="#2f8f86" stroke="#2b2b2b" stroke-width="2.5"/></g>
+          <g id="arm-r"><line x1="134" y1="156" x2="164" y2="184" stroke="#2b2b2b" stroke-width="4"/>
+            <ellipse id="spier-r" class="lk-spier" cx="145" cy="166" rx="8" ry="6" fill="#57b85f" stroke="#2b2b2b" stroke-width="2" transform="rotate(43 145 166)" style="display:none"/>
+            <circle cx="166" cy="187" r="6" fill="#2f8f86" stroke="#2b2b2b" stroke-width="2.5"/></g>
+          <rect x="68" y="184" width="64" height="30" rx="10" fill="#57b85f" stroke="#2e6b34" stroke-width="3"/>
+          <line x1="100" y1="200" x2="100" y2="214" stroke="#2e6b34" stroke-width="3"/>
+          <ellipse id="bochel" class="lk-bochel" cx="72" cy="142" rx="17" ry="13" fill="#e2e4da" stroke="#2b2b2b" stroke-width="3" style="display:none"/>
+          <rect x="66" y="140" width="68" height="52" rx="20" fill="#fbfbf2" stroke="#2b2b2b" stroke-width="3"/>
+          <rect x="84" y="150" width="32" height="20" rx="7" fill="#2f8f86" stroke="#2b2b2b" stroke-width="2.5"/>
+          <g id="roest" class="lk-roest" style="display:none">
+            <ellipse cx="76" cy="162" rx="5" ry="4" fill="#9c6a2f" opacity=".85"/>
+            <ellipse cx="123" cy="156" rx="4" ry="5" fill="#7a4f22" opacity=".8"/>
+            <ellipse cx="79" cy="181" rx="4.5" ry="3.5" fill="#a9682f" opacity=".8"/>
+            <ellipse cx="119" cy="183" rx="4" ry="4" fill="#8a5320" opacity=".82"/>
+            <circle cx="100" cy="188" r="3" fill="#9c6a2f" opacity=".75"/>
+          </g>
+          <path d="M93,124 q14,4 0,7 q-14,4 0,7" fill="none" stroke="#9aa0a4" stroke-width="4" stroke-linecap="round"/>
+          <g id="kop">
+            <circle cx="52" cy="76" r="13" fill="#2f8f86" stroke="#2b2b2b" stroke-width="2.5"/>
+            <circle cx="52" cy="76" r="6" fill="#bfe3df"/>
+            <circle cx="148" cy="76" r="13" fill="#2f8f86" stroke="#2b2b2b" stroke-width="2.5"/>
+            <circle cx="148" cy="76" r="6" fill="#bfe3df"/>
+            <path d="M72,46 Q52,48 52,76 Q52,108 72,122 Q100,134 128,122 Q148,108 148,76 Q148,48 128,46 Q100,40 72,46 Z" fill="#fbfbf2" stroke="#2b2b2b" stroke-width="3"/>
+            <path d="M80,64 Q100,60 120,64 Q131,66 125,79 L107,106 Q100,115 93,106 L75,79 Q69,66 80,64 Z" fill="#3a9d94" stroke="#2b8077" stroke-width="1.5"/>
+            <g id="ogen">
+              <line x1="90" y1="78" x2="90" y2="90" stroke="#1f2a28" stroke-width="4.5" stroke-linecap="round"/>
+              <line x1="110" y1="78" x2="110" y2="90" stroke="#1f2a28" stroke-width="4.5" stroke-linecap="round"/>
+            </g>
+            <g id="ogen-hart" style="display:none">
+              <path d="M90,88 C83,81 87,75 90,80 C93,75 97,81 90,88 Z" fill="#e0556b"/>
+              <path d="M110,88 C103,81 107,75 110,80 C113,75 117,81 110,88 Z" fill="#e0556b"/>
+            </g>
+            <g id="ogen-slaap" style="display:none">
+              <path d="M85,84 Q90,88 95,84" fill="none" stroke="#1f2a28" stroke-width="3.5" stroke-linecap="round"/>
+              <path d="M105,84 Q110,88 115,84" fill="none" stroke="#1f2a28" stroke-width="3.5" stroke-linecap="round"/>
+            </g>
+            <g id="ogen-verrast" style="display:none">
+              <circle cx="90" cy="83" r="4.6" fill="#1f2a28"/><circle cx="91.6" cy="81.4" r="1.3" fill="#fff"/>
+              <circle cx="110" cy="83" r="4.6" fill="#1f2a28"/><circle cx="111.6" cy="81.4" r="1.3" fill="#fff"/>
+            </g>
+            <path id="mond" d="M93,97 Q100,101 107,97 Q106,108 100,109 Q94,108 93,97 Z" fill="#15605a"/>
+          </g>
+        </svg>
+      </div>
+      <!-- Gast-Botty: een Botty die op bezoek komt via een #b=-deellink. SVG wordt
+           bij het bezoek ingespoten (kloon van de host met de juiste look en groei). -->
+      <div class="botty-wrap gast" id="gast" style="display:none" aria-hidden="true">
+        <div class="ballon gast-ballon" id="gast-ballon"></div>
+        <div class="gast-naam" id="gast-naam"></div>
+      </div>
+    </div>
+
+    <div class="ziek-balk" id="ziek-balk" style="display:none">
+      <span id="ziek-tekst">🤒 Botty heeft een bug!</span>
+      <button id="btn-herstel">💊 Herstel <kbd class="toets-kbd">4</kbd></button>
+    </div>
+
+    <div class="bezoek-balk" id="bezoek-balk" style="display:none">
+      <span id="bezoek-tekst">🤖 is op bezoek!</span>
+      <button id="btn-samenspelen">🎉 Samen spelen</button>
+      <button id="btn-totziens" class="licht">👋 Tot ziens</button>
+    </div>
+
+    <div class="knoppen">
+      <button class="actie k-voer" id="btn-voer"><span class="toets-hint" aria-hidden="true">1</span><span class="ico">🍃</span>Voeren</button>
+      <button class="actie k-beweeg" id="btn-beweeg"><span class="toets-hint" aria-hidden="true">2</span><span class="ico">🤸</span>Bewegen</button>
+      <button class="actie k-dilemma" id="btn-dilemma"><span class="toets-hint" aria-hidden="true">3</span><span class="ico">⚖️</span>Dilemma</button>
+    </div>
+
+  </main>
+
+  <nav class="voet-paneel" aria-label="Meer pagina's">
+    <span class="voet-kop">Meer in het Botty-universum</span>
+    <a class="terug" href="index.html">← terug naar de kortebroekenmeter</a>
+    <a class="terug" href="https://hive.ramonmoorlag.nl/">🌐 Botty-verse: de Singularity →</a>
+    <a class="terug" href="kaarten.html">🃏 Verzamelkaarten →</a>
+  </nav>
+
+  <!-- Voer-modal -->
+  <div class="overlay" id="overlay-voer">
+    <div class="modal">
+      <h2>Voer Botty duurzame data</h2>
+      <p class="vraag">Kies wijs! Duurzame, eerlijke data maakt Botty sterk. Vervuilde data maakt haar ziek.</p>
+      <div class="kaarten" id="kaarten"></div>
+      <p class="hint">Tip: betrouwbaar, privacy-vriendelijk en divers = duurzaam.</p>
+      <button class="sluit" id="sluit-voer">Klaar</button>
+    </div>
+  </div>
+
+  <!-- Dilemma-modal -->
+  <div class="overlay" id="overlay-dilemma">
+    <div class="modal">
+      <h2>⚖️ Ethisch dilemma</h2>
+      <p class="vraag" id="dilemma-vraag"></p>
+      <div class="keuzes" id="dilemma-keuzes"></div>
+      <div id="dilemma-na" style="display:none">
+        <p class="reactie" id="dilemma-reactie"></p>
+        <button class="sluit" id="sluit-dilemma">Begrepen!</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Taal-modal -->
+  <div class="overlay open" id="overlay-taal" style="z-index:1000">
+    <div class="modal" style="text-align:center;max-width:300px">
+      <p style="font-size:18px;font-weight:900;color:var(--groen);margin-bottom:1.2rem">Kies je taal · Choose your language</p>
+      <button class="sluit" id="taal-nl" style="width:100%;margin-bottom:.7rem;font-size:16px">🇳🇱 Nederlands</button>
+      <button class="sluit" id="taal-en" style="width:100%;font-size:16px">🇬🇧 English</button>
+    </div>
+  </div>
+
+  <!-- Geboorte-modal -->
+  <div class="overlay" id="overlay-geboorte">
+    <div class="geboorte-inhoud">
+      <p class="geboorte-titel" id="geb-titel">Een stapel losse materialen…</p>
+      <p class="geboorte-gen" id="geboorte-gen" style="display:none">Generatie 1</p>
+      <div class="bouw-wrap">
+        <svg id="bouw-botty" viewBox="0 0 200 250" aria-label="Botty wordt in elkaar gezet">
+          <g class="bp bp-antenne">
+            <path d="M100,46 Q96,28 109,20" fill="none" stroke="#2b2b2b" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="111" cy="16" r="6.5" fill="#8c9196" stroke="#2b2b2b" stroke-width="2.5"/>
+          </g>
+          <g class="bp bp-leg-l"><line x1="86" y1="212" x2="80" y2="236" stroke="#2b2b2b" stroke-width="4"/>
+            <ellipse cx="78" cy="239" rx="11" ry="6" fill="#fbfbf2" stroke="#2b2b2b" stroke-width="2.5"/></g>
+          <g class="bp bp-leg-r"><line x1="114" y1="212" x2="120" y2="236" stroke="#2b2b2b" stroke-width="4"/>
+            <ellipse cx="122" cy="239" rx="11" ry="6" fill="#fbfbf2" stroke="#2b2b2b" stroke-width="2.5"/></g>
+          <g class="bp bp-arm-l"><line x1="66" y1="156" x2="36" y2="184" stroke="#2b2b2b" stroke-width="4"/>
+            <circle cx="34" cy="187" r="6" fill="#2f8f86" stroke="#2b2b2b" stroke-width="2.5"/></g>
+          <g class="bp bp-arm-r"><line x1="134" y1="156" x2="164" y2="184" stroke="#2b2b2b" stroke-width="4"/>
+            <circle cx="166" cy="187" r="6" fill="#2f8f86" stroke="#2b2b2b" stroke-width="2.5"/></g>
+          <g class="bp bp-shorts">
+            <rect x="68" y="184" width="64" height="30" rx="10" fill="#57b85f" stroke="#2e6b34" stroke-width="3"/>
+            <line x1="100" y1="200" x2="100" y2="214" stroke="#2e6b34" stroke-width="3"/></g>
+          <g class="bp bp-torso">
+            <rect x="66" y="140" width="68" height="52" rx="20" fill="#fbfbf2" stroke="#2b2b2b" stroke-width="3"/>
+            <rect x="84" y="150" width="32" height="20" rx="7" fill="#2f8f86" stroke="#2b2b2b" stroke-width="2.5"/></g>
+          <g class="bp bp-neck">
+            <path d="M93,124 q14,4 0,7 q-14,4 0,7" fill="none" stroke="#9aa0a4" stroke-width="4" stroke-linecap="round"/></g>
+          <g class="bp bp-ear-l"><circle cx="52" cy="76" r="13" fill="#2f8f86" stroke="#2b2b2b" stroke-width="2.5"/>
+            <circle cx="52" cy="76" r="6" fill="#bfe3df"/></g>
+          <g class="bp bp-ear-r"><circle cx="148" cy="76" r="13" fill="#2f8f86" stroke="#2b2b2b" stroke-width="2.5"/>
+            <circle cx="148" cy="76" r="6" fill="#bfe3df"/></g>
+          <g class="bp bp-kop">
+            <path d="M72,46 Q52,48 52,76 Q52,108 72,122 Q100,134 128,122 Q148,108 148,76 Q148,48 128,46 Q100,40 72,46 Z" fill="#fbfbf2" stroke="#2b2b2b" stroke-width="3"/>
+            <path d="M80,64 Q100,60 120,64 Q131,66 125,79 L107,106 Q100,115 93,106 L75,79 Q69,66 80,64 Z" fill="#3a9d94" stroke="#2b8077" stroke-width="1.5"/>
+            <line x1="90" y1="78" x2="90" y2="90" stroke="#1f2a28" stroke-width="4.5" stroke-linecap="round"/>
+            <line x1="110" y1="78" x2="110" y2="90" stroke="#1f2a28" stroke-width="4.5" stroke-linecap="round"/>
+            <path d="M93,97 Q100,101 107,97 Q106,108 100,109 Q94,108 93,97 Z" fill="#15605a"/></g>
+        </svg>
+      </div>
+      <p class="geboorte-sub" id="geb-sub" style="display:none">Geef Botty een naam en een goede start! Zorg je goed voor haar — geef haar data, laat haar bewegen en los dilemma's op. Haar stemming (🧠) laat zien hoe ze zich écht voelt. Hoe meer bezoekers er zijn, hoe blijer ze wordt. Gaat ze goed mee, dan kan ze een nieuwe generatie starten!</p>
+      <input id="naam-input" class="naam-input" maxlength="14" placeholder="Geef je Botty een naam…" style="display:none" />
+      <button class="sluit start-ai" id="start-ai">🔧 START AI</button>
+      <button class="sluit" id="start-knop" style="display:none">Begin het avontuur!</button>
+    </div>
+  </div>
+
+  <!-- Tutorial-modal -->
+  <div class="overlay" id="overlay-tutorial">
+    <div class="modal">
+      <span class="tut-emoji" id="tut-emoji">⚡</span>
+      <h2 id="tut-titel">Welkom!</h2>
+      <p class="vraag" id="tut-tekst"></p>
+      <div class="tut-stippen" id="tut-stippen"></div>
+      <div class="tut-nav">
+        <button class="sluit knop-licht" id="tut-vorige">Vorige</button>
+        <button class="sluit" id="tut-volgende">Volgende</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Deel-modal -->
+  <div class="overlay" id="overlay-share">
+    <div class="modal">
+      <div class="deelkaart">
+        <div class="mini" id="share-botty"></div>
+        <div class="d-titel" id="share-naam">Mijn Botty</div>
+        <div class="d-regels" id="share-regels"></div>
+      </div>
+      <div class="deel-acties" style="margin-top:.9rem">
+        <button class="sluit" id="deel-knop">Deel</button>
+        <button class="sluit knop-licht" id="kopieer-knop">Kopieer</button>
+      </div>
+      <button class="sluit knop-licht" id="sluit-share">Sluiten</button>
+    </div>
+  </div>
+
+  <!-- Gedeelde Botty-modal: getoond als de pagina geopend wordt via een #b=-deellink.
+       Laat de meegedeelde momentopname (leeftijd, meters, look) read-only zien. -->
+  <div class="overlay" id="overlay-gedeeld">
+    <div class="modal">
+      <div class="deel-badge" id="gedeeld-badge"></div>
+      <div class="deelkaart">
+        <div class="mini" id="gedeeld-botty"></div>
+        <div class="d-titel" id="gedeeld-naam"></div>
+        <div class="d-regels" id="gedeeld-regels"></div>
+      </div>
+      <button class="sluit" id="gedeeld-bezoek" style="margin-top:.9rem;display:none">🚪 Laat binnen — kom op bezoek!</button>
+      <button class="sluit knop-licht" id="gedeeld-speel" style="margin-top:.5rem">Speel met je eigen Botty 🤖</button>
+    </div>
+  </div>
+
+  <!-- AI-assistent-modal (niveaus van automatisering) -->
+  <div class="overlay" id="overlay-ai">
+    <div class="modal">
+      <h2>🤖 AI-assistent</h2>
+      <p class="vraag">Hoeveel zorg geef je uit handen? Schuif van links (jij doet alles) naar rechts (AI doet alles).</p>
+      <div class="ai-slider-wrap">
+        <input type="range" id="ai-slider" min="0" max="5" step="1" value="0" aria-label="Automatiseringsniveau" />
+        <div class="ai-slider-ticks" id="ai-slider-ticks">
+          <span>Uit</span><span>Signaal</span><span>Advies</span><span>Deels</span><span>Vangnet</span><span>Volledig</span>
+        </div>
+      </div>
+      <div class="ai-niv-info">
+        <div class="ai-niv-tag2" id="ai-niv-tag2"></div>
+        <div class="ai-niv-titel" id="ai-niv-titel"></div>
+        <div class="ai-niv-uitleg2" id="ai-niv-uitleg2"></div>
+        <div class="ai-niv-band" id="ai-niv-band"></div>
+      </div>
+      <p class="hint">Naar de niveaus van automatisering (Inge Molenaar). Lees meer via ❔ bovenin.</p>
+      <label class="xai-rij" for="xai-toggle">
+        <span class="xai-lbl">🔍 Uitlegbare AI
+          <small>Laat in de tekstballon zien waarom de AI handelt</small>
+        </span>
+        <span class="toggle-sw">
+          <input type="checkbox" id="xai-toggle" aria-label="Uitlegbare AI aan of uit" />
+          <span class="toggle-track"></span>
+        </span>
+      </label>
+      <button class="sluit" id="sluit-ai">Klaar</button>
+    </div>
+  </div>
+
+  <!-- Levenseinde-modal -->
+  <div class="overlay" id="overlay-einde">
+    <div class="einde-inhoud">
+      <div class="groot-emoji">💤</div>
+      <h2 id="einde-titel">Botty is uitgevallen</h2>
+      <p class="sub" id="einde-tekst"></p>
+      <p class="sub" id="einde-leeftijd"></p>
+      <p class="einde-reflectie" id="einde-reflectie"></p>
+      <button class="sluit" id="nieuwe-gen">Start een nieuwe generatie 🥚</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ================= VERTALINGEN =================
+  var huidigeT = null;
+  var huidigeLang = "nl";
+  var T = {
+    nl: {
+      ondertitel: "Voer haar duurzame data, laat haar bewegen en denk samen na.",
+      btnHelp: "Uitleg",
+      btnShare: "Deel Botty",
+      btnMuteLabel: "Geluid aan of uit",
+      btnMuteTitle: "Geluid aan/uit",
+      btnAiLabel: "AI-assistent instellen",
+      btnHerstel: "💊 Herstel",
+      btnSamenspelen: "🎉 Samen spelen",
+      btnTotziens: "👋 Tot ziens",
+      btnVoerTekst: "Voeren",
+      btnBeweegTekst: "Bewegen",
+      voerH2: "Voer Botty duurzame data",
+      voerVraag: "Kies wijs! Duurzame, eerlijke data maakt Botty sterk. Vervuilde data maakt haar ziek.",
+      voerHint: "Tip: betrouwbaar, privacy-vriendelijk en divers = duurzaam.",
+      sluitVoer: "Klaar",
+      dilemmaH2: "⚖️ Ethisch dilemma",
+      sluitDilemma: "Begrepen!",
+      naamPlaceholder: "Geef je Botty een naam…",
+      startKnop: "Begin het avontuur!",
+      tutVorige: "Vorige",
+      tutVolgende: "Volgende",
+      tutLaatste: "Aan de slag!",
+      deelKnop: "Deel",
+      kopieerKnop: "Kopieer",
+      sluitShare: "Sluiten",
+      gedeeldBezoek: "🚪 Laat binnen — kom op bezoek!",
+      gedeeldSpeel: "Speel met je eigen Botty 🤖",
+      aiH2: "🤖 AI-assistent",
+      aiVraag: "Hoeveel zorg geef je uit handen? Schuif van links (jij doet alles) naar rechts (AI doet alles).",
+      aiHint: "Naar de niveaus van automatisering (Inge Molenaar). Lees meer via ❔ bovenin.",
+      sluitAi: "Klaar",
+      nieuweGen: "Start een nieuwe generatie 🥚",
+      gebSub: "Geef Botty een naam en een goede start! Zorg je goed voor haar — geef haar data, laat haar bewegen en los dilemma's op. Haar stemming (🧠) laat zien hoe ze zich écht voelt. Hoe meer bezoekers er zijn, hoe blijer ze wordt. Gaat ze goed mee, dan kan ze een nieuwe generatie starten!",
+      gebTitel1: "Een stapel losse materialen…",
+      gebTitel2: "AI wordt geïnitialiseerd…",
+      gebTitel3: "🎉 Botty is in elkaar gezet! 🎉",
+      eindeTitelSuffix: " is uitgevallen",
+      leeftijdMinuut: "min",
+      leeftijdUur: "uur",
+      leeftijdDag: " dag",
+      leeftijdDagen: " dagen",
+      leeftijdPasgeboren: "pasgeboren",
+      voedsel: [
+        {em:"📊", nm:"Anonieme leerresultaten", goed:true},
+        {em:"📚", nm:"Open leermateriaal", goed:true},
+        {em:"✅", nm:"Toestemming gevraagd", goed:true},
+        {em:"🌍", nm:"Diverse voorbeelden", goed:true},
+        {em:"🔎", nm:"Gecontroleerde feiten", goed:true},
+        {em:"🔋", nm:"Energiezuinig getraind", goed:true},
+        {em:"🤝", nm:"Eerlijk gedeelde data", goed:true},
+        {em:"📰", nm:"Nepnieuws", goed:false},
+        {em:"⚖️", nm:"Bevooroordeelde data", goed:false},
+        {em:"🕵️", nm:"Gestolen gegevens", goed:false},
+        {em:"🗑️", nm:"Verouderde info", goed:false},
+        {em:"🚫", nm:"Discriminerende voorbeelden", goed:false}
+      ],
+      dilemmas: [
+        {v:"Een leerling laat AI haar opstel schrijven. Wat raad jij de school aan?",keuzes:[
+          {t:"AI helemaal verbieden", w:1, r:"Verbieden lijkt veilig, maar leerlingen leren dan niet hoe ze AI verstandig en eerlijk gebruiken. Beter: samen leren."},
+          {t:"Leren hóe je AI eerlijk gebruikt", w:3, r:"Goed gekozen! Leerlingen leren AI als hulpmiddel te gebruiken én eerlijk te zijn over wat ze zelf deden."},
+          {t:"Niks doen", w:0, r:"Zonder afspraken weet niemand wat mag. Duidelijke, eerlijke afspraken helpen iedereen."}]},
+        {v:"Een AI voorspelt welke leerlingen dreigen uit te vallen. Hoe gebruik je dat?",keuzes:[
+          {t:"Gebruiken om extra hulp te bieden", w:3, r:"Mooi! Voorspellingen mogen helpen, nooit een stempel zijn. De mens beslist, AI ondersteunt."},
+          {t:"Leerlingen apart zetten", w:0, r:"Dat is een stempel dat oneerlijk uitpakt. Voorspellingen mogen kansen niet wegnemen."},
+          {t:"Helemaal niet vertrouwen", w:1, r:"Voorzichtig zijn is goed, maar als de data eerlijk is kan het ook helpen. Blijf wel kritisch."}]},
+        {v:"Een gratis AI-tool wil álle leerlinggegevens, in ruil voor gratis gebruik.",keuzes:[
+          {t:"Doen, het is gratis!", w:0, r:"Niets is écht gratis: je betaalt met privacy. Persoonsgegevens van kinderen verdienen bescherming."},
+          {t:"Alleen geven wat echt nodig is", w:3, r:"Top! Verzamel zo min mogelijk data (dataminimalisatie). Dat is duurzaam én privacyvriendelijk."},
+          {t:"Eerst toestemming en uitleg vragen", w:3, r:"Heel goed! Transparantie en toestemming horen bij eerlijke data."}]},
+        {v:"De AI geeft één groep leerlingen steeds makkelijkere opdrachten. Wat is er aan de hand?",keuzes:[
+          {t:"Prima, lekker makkelijk", w:0, r:"Dit kan bias zijn: vooroordelen in de data. Dat is oneerlijk en houdt verschillen in stand."},
+          {t:"Onderzoeken of de data scheef is", w:3, r:"Precies! Controleer altijd op bias zodat iedereen eerlijke kansen krijgt."},
+          {t:"De AI gewoon uitzetten", w:1, r:"Begrijpelijk, maar eerst onderzoeken is slimmer. Misschien is de data te repareren."}]},
+        {v:"Een AI-model kost enorm veel energie om te trainen. Wat weegt mee?",keuzes:[
+          {t:"Alleen of het goed werkt", w:1, r:"Werken is belangrijk, maar duurzaamheid telt óók. Energie en milieu horen bij de keuze."},
+          {t:"Ook de energie en het milieu", w:3, r:"Goed! Duurzame AI kijkt ook naar energieverbruik. Soms is een kleiner model genoeg."},
+          {t:"Maakt niet uit", w:0, r:"Het maakt wél uit: AI heeft een echte voetafdruk op onze planeet."}]},
+        {v:"Een chatbot geeft leerlingen soms een fout antwoord met veel zelfvertrouwen.",keuzes:[
+          {t:"Altijd geloven wat AI zegt", w:0, r:"AI kan overtuigend én fout zijn. Blijf altijd zelf nadenken en controleer feiten."},
+          {t:"Leerlingen leren controleren", w:3, r:"Sterk! Kritisch denken en feiten checken is de beste bescherming tegen fouten."},
+          {t:"De chatbot verbieden", w:1, r:"Kan, maar leren omgaan met fouten is waardevoller dan vermijden."}]}
+      ],
+      aiNiveaus: [
+        {naam:"Uit",            tag:"jij doet alles",   uitleg:"Jij verzorgt Botty volledig zelf en let zelf op de meters.",                                  band:"groeit volledig 💚"},
+        {naam:"Signalering",    tag:"AI geeft seintje",  uitleg:"De AI houdt de meters in de gaten en laat de knop oplichten die aandacht nodig heeft. Jij beslist en handelt zelf.",  band:"groeit volledig 💚"},
+        {naam:"Advisering",     tag:"AI tipt",           uitleg:"De AI geeft je een tip over wat je het beste kunt doen. Jij beslist en handelt zelf.",                                          band:"groeit volledig 💚"},
+        {naam:"Gedeeltelijk",   tag:"samen",             uitleg:"De AI doet het voeren en bewegen. Geluk, bugs én dilemma's blijven aan jou.",                                                   band:"groeit nog goed 💚"},
+        {naam:"Voorwaardelijk", tag:"AI met vangnet",    uitleg:"De AI verzorgt Botty zelf en bewaakt de meters, maar bij een dilemma vraagt ze jóu om te beslissen.",                          band:"groeit beperkt 🧡"},
+        {naam:"Volledig",       tag:"AI doet alles",     uitleg:"De AI neemt alles over, ook de dilemma's. Jij kijkt toe. Alleen Botty aaien laat de band nog groeien.",                       band:"groeit niet meer 🤍"}
+      ],
+      berichten: function(n){ return [
+        "Je zorgt weer helemaal zelf voor " + naam() + "! 💚",
+        "De AI geeft een seintje als een knop aandacht nodig heeft. Jij beslist en handelt zelf. 🔦",
+        "De AI geeft tips over wat je kunt doen. Jij beslist en handelt zelf. 💡",
+        "De AI doet het voeren en bewegen. Geluk, bugs en dilemma's blijven aan jou. 🤖",
+        "De AI verzorgt " + naam() + " zelf, maar vraagt jóu bij dilemma's. 🤖",
+        "De AI verzorgt " + naam() + " volledig, ook de dilemma's. Jij houdt toezicht. 🤖"
+      ][n]; },
+      aaiZinnen: ["Hihi! 😄","Dat kriebelt!","Aaah, fijn ❤️","Nog een keer!","Jij bent lief 💚","*tevreden gezoem*"],
+      groetjes: ["👀","Hoi!","🎵","Lekker weer hè?","🤖"],
+      bewegingen: ["Jumping jacks! 🤸","Even surfen op de datagolf! 🏄","Dansje erbij! 💃","Stretchen en strekken! 🙆","Rondje rennen! 🏃","Molenwiek! 💨","Robotdans! 🤖"],
+      jubel: ["Samen spelen is het allerleukst! 😄","Wat een feestje! 🎉","Jullie hebben lol samen! 😁","Vriendjes maken blij! 💚"],
+      doodTekst: function(oorzaak){ if(oorzaak==="ouderdom") return "Na een lang en wijs leven is "+naam()+" vredig uitgeschakeld. 🌙"; if(oorzaak==="ziekte") return "De bug van "+naam()+" werd niet op tijd verholpen. 💔"; return naam()+" kreeg te weinig aandacht en is uitgevallen. 💔"; },
+      reflectieTekst: function(pctAi, band){ var regel = "🤖 De AI deed "+pctAi+"% van de zorg, jij "+(100-pctAi)+"%. Jullie band werd "+band+"%. "; if(pctAi<=20) return regel+"Je deed bijna alles zelf — zie je hoe persoonlijke aandacht de band sterk maakt? 💚"; else if(pctAi<=60) return regel+"Je deelde de zorg met de AI. Een mooie balans tussen hulp en eigen aandacht. 🤝"; else return regel+"Je liet veel aan de AI over. Handig — maar echte band vraagt jóuw aandacht. 🧡"; },
+      reflectieLeeg: "Er was te weinig zorg om iets over te zeggen.",
+      dagdeelGroet: function(h){ if(h<6) return "Goedenacht"; if(h<12) return "Goedemorgen ☀️"; if(h<18) return "Goedemiddag"; if(h<22) return "Goedenavond 🌆"; return "Het is laat 😴"; },
+      stadiumLabels: {baby:"baby 👶", kind:"kind", tiener:"tiener", volwassen:"volwassen"},
+      zegHoi: function(){ return "Hoi, ik ben "+naam()+"! Geef me duurzame data 🍃"; },
+      zegDuurzaam: "Mmm, duurzame data! 😋",
+      zegVervuild: "Bah! Deze data is vervuild… 🤢",
+      zegBug: "Oei… ik heb een bug! 🤒 Herstel me alsjeblieft.",
+      zegGepatcht: "Pff, gepatcht! Dankjewel 💚",
+      zegZiek: "Ik voel me niet lekker… 🤒",
+      zegEnergie: "Mijn energie loopt op… blijf met me bezig! ⚡",
+      zegHonger: "Ik heb honger naar goede data… 🍃",
+      zegBeweeg: "Ik wil graag bewegen! 🤸",
+      zegNietLekker: ["Ik voel me niet zo lekker… 🥺","Ik piep en kraak een beetje… 🛠️","Volgens mij heb ik wat roest… 😟"],
+      zegGaap: "*gaap* 😴",
+      zegWelkomGast: function(sn){ return "Hoi "+sn+"! Welkom! 👋"; },
+      zegGastKomt: function(sn){ return "🤖 "+sn+" is op bezoek!"; },
+      zegTotZiens: "Dag! Kom snel weer spelen! 💚",
+      zegDilemma: "Ik heb een dilemma voor je… ⚖️",
+      zegAiTwijfelt: "🤖 De AI twijfelt — jij beslist dit dilemma. ⚖️",
+      toastAi: "Let op: jullie band groeit alleen door jóuw aandacht 💚",
+      aiVoerTekst: function(dataBefore){ return state.uitlegbaar ? "🔍 Data was "+dataBefore+"% — ik voer duurzame data 🍃" : "🤖 AI voert duurzame data"; },
+      aiBeweegTekst: function(fitBefore){ return state.uitlegbaar ? "🔍 Fitheid was "+fitBefore+"% — ik laat "+naam()+" bewegen 🤸" : "🤖 AI laat "+naam()+" bewegen"; },
+      aiHerstelTekst: function(){ return state.uitlegbaar ? "🔍 Bug gedetecteerd → ik verhelp de fout 🛠️" : "🤖 AI verhelpt de bug"; },
+      aiTroostTekst: function(gelukBefore){ return state.uitlegbaar ? "🔍 Geluk was "+gelukBefore+"% — ik troost "+naam()+" 💙" : "🤖 AI houdt "+naam()+" blij"; },
+      aiDilemmaTekst: function(beste){ return state.uitlegbaar ? "🔍 AI koos '"+beste.t+"' (+"+beste.w+" wijsheid) ⚖️" : "🤖 AI koos wijs bij een dilemma"; },
+      aiTickerUit: function(){ return "AI-assistent staat <b>uit</b> — jij verzorgt "+naam()+" zelf."; },
+      aiTickerAan: function(n, inf){ return "AI · niveau "+n+" — <b>"+inf.naam+"</b> · "+inf.tag; },
+      signaleringBug: "🔍 Bug gedetecteerd — herstelknop licht op 🔦",
+      signaleringFit: function(pct){ return "🔍 Fitheid "+pct+"% laag — beweegknop licht op 🔦"; },
+      signaleringData: function(label, pct){ return "🔍 "+label+" "+pct+"% laag — voerknop licht op 🔦"; },
+      adviesBug: function(){ return state.uitlegbaar ? "🔍 Bug aanwezig — tip: herstel de fout 🛠️" : "💡 Tip: herstel de bug van "+naam()+"."; },
+      adviesFit: function(pct){ return state.uitlegbaar ? "🔍 Fitheid "+pct+"% laag — laat "+naam()+" bewegen." : "💡 Tip: Laat "+naam()+" bewegen."; },
+      adviesGeluk: function(pct){ return state.uitlegbaar ? "🔍 Geluk "+pct+"% laag — geef "+naam()+" aandacht — aai haar." : "💡 Tip: Geef "+naam()+" aandacht — aai haar."; },
+      adviesData: function(label, pct){ return state.uitlegbaar ? "🔍 "+label+" "+pct+"% laag — voer "+naam()+" duurzame data." : "💡 Tip: Voer "+naam()+" duurzame data."; },
+      welkomAfwezig: function(groet, duur){ return groet+"! Je was "+duur+" weg — ik miste je! 💚"; },
+      welkomTerug: function(groet){ return groet+"! Fijn dat je er bent! 👋"; },
+      humanizeDag: function(d){ return d+(d===1?" dag":" dagen"); },
+      humanizeUur: function(u){ return u+" uur"; },
+      humanizeMin: function(m){ return m+" min"; },
+      dilemmaWijs: "Wijs gekozen",
+      dilemmaNog: "Denk er nog eens over",
+      dilemmaBijna: "Bijna",
+      bezoekTekst: function(sn){ return "🤖 "+sn+" is op bezoek!"; },
+      gastHallo: function(){ return "Hallo "+naam()+"! 😊"; },
+      gastTotziens: "Tot ziens! 👋",
+      deelTekstFn: function(){ return "Mijn Botty heet "+naam()+" — "+leeftijdTekst()+" oud, Generatie "+state.generatie+", 🧠 wijsheid "+state.wijs+", ⚡ energie "+Math.round(state.energie)+"%. Speel ook mee bij NOLAI!"; },
+      gedeeldBadgeKan: function(sn){ return sn+" wil bij "+naam()+" op bezoek komen!<small>Laat de gast-Botty binnen — samen spelen maakt ze blij.</small>"; },
+      gedeeldBadgeNiet: function(sn){ return "🤖 "+sn+" deelt zijn Botty met je!<small>Start eerst je eigen Botty; dan kunnen ze op bezoek bij elkaar.</small>"; },
+      gekopieerd: "Gekopieerd! 📋",
+      kopierenFout: "Kon niet kopiëren",
+      kopierenNiet: "Kopiëren niet ondersteund",
+      xaiAan: "Uitlegbare AI aan 🔍 — ik leg uit waarom ik handel.",
+      xaiUit: "Uitlegbare AI uit.",
+      tutStappen: [
+        {e:"🤖", t:"Zorg goed voor Botty", x:"Botty begint als klein robotje. Zorg je goed voor haar, dan wordt ze sterk en kleurrijk. Verwaarloos je haar, dan krijgt ze roest en een bocheltje, en voelt ze zich niet lekker. Ze heeft 5 meters: energie, data, fitheid, geluk én stemming."},
+        {e:"🧠", t:"Stemming", x:"De paarse 🧠-balk laat Botty's gemoedstoestand zien — los van haar gewone meters. Stemming stijgt als er bezoekers zijn, als jij haar verzorgt of als de AI voor haar zorgt. Ze daalt als Botty lang alleen is of ziek is. Een hoge stemming maakt haar blijer en beïnvloedt haar emotie!"},
+        {e:"😊", t:"10 emoties", x:"Botty toont hoe ze zich écht voelt:\n\n😄 enthousiast · 😊 blij · 😌 kalm\n🤔 nieuwsgierig · 🥺 eenzaam · 😟 verdrietig\n😰 angstig · 😵 verward · 🥲 ziek · 🦾 trots\n\nHaar stemming bepaalt mee welke emotie ze toont. Zorg goed voor haar — dan word je verrast!"},
+        {e:"👥", t:"Bezoekers", x:"Hoe meer mensen de hive bezoeken, hoe blijer Botty wordt! Bezoekers verhogen haar stemming automatisch. Je ziet het bezoekersaantal live bovenaan. Deel de link met vrienden en maak de hive levendig!"},
+        {e:"🍃", t:"Voeren", x:"Geef Botty duurzame, eerlijke data. Weiger vervuilde data zoals nepnieuws en bias. Goede voeding houdt haar data-bar vol én doet haar stemming goed."},
+        {e:"🤸", t:"Bewegen", x:"Laat Botty bewegen voor haar fitheid — en het is nog leuk ook. Regelmatig bewegen houdt haar bars op peil."},
+        {e:"⚖️", t:"Dilemma's", x:"Denk samen na over AI in het onderwijs en verdien wijsheid. Goede keuzes bouwen haar geluk en band met jou op."},
+        {e:"🤖", t:"AI-assistent", x:"Met de ⚡-schuif kies je hoeveel de AI overneemt. De 6 stappen volgen de niveaus van automatisering van Inge Molenaar:\n\n0 · Uit — jij doet alles\n1 · Signalering — AI licht de juiste knop op\n2 · Advisering — AI geeft een tip\n3 · Gedeeltelijk — AI voert & beweegt\n4 · Voorwaardelijk — AI zorgt, maar vraagt jóu bij dilemma's\n5 · Volledig — AI doet alles\n\nLet op: AI-zorg heeft ook effect op Botty's stemming!"},
+        {e:"🧬", t:"Generaties", x:"Als Botty lang genoeg goed verzorgd is, kan ze een kind krijgen! Het kind erft genen van haar — inclusief een stukje stemming. Elk kind start een nieuwe generatie. Hoe verder de generatie, hoe trotser Botty kan worden. 🦾"},
+        {e:"🚪", t:"Op bezoek", x:"Deel Botty's link (📤) met een vriend. Als die de link opent, loopt jouw Botty bij hém op bezoek — en dat doet haar stemming goed! Krijg jij een link, klik dan op 'Laat binnen'. Samen spelen maakt je Botty blijer. 💞"},
+        {e:"⌨️", t:"Sneltoetsen", x:"Bedien Botty snel met je toetsenbord:\n\n1 · Voeren\n2 · Bewegen\n3 · Dilemma\n4 · Bug verhelpen (alleen als Botty ziek is)\n\nBij het voer-scherm: kies kaart 1–4 met het getal.\nBij een dilemma: kies antwoord 1–3 met het getal."},
+        {e:"🌞", t:"Dag & nacht", x:"De zon komt op en gaat onder met de echte klok. 's Nachts schijnt de maan. Botty's stemming kan ook fluctueren met het moment van de dag!"}
+      ]
+    },
+    en: {
+      ondertitel: "Feed her sustainable data, let her move, and think together.",
+      btnHelp: "Help",
+      btnShare: "Share Botty",
+      btnMuteLabel: "Sound on or off",
+      btnMuteTitle: "Sound on/off",
+      btnAiLabel: "Configure AI assistant",
+      btnHerstel: "💊 Fix",
+      btnSamenspelen: "🎉 Play together",
+      btnTotziens: "👋 Goodbye",
+      btnVoerTekst: "Feed",
+      btnBeweegTekst: "Move",
+      voerH2: "Feed Botty sustainable data",
+      voerVraag: "Choose wisely! Sustainable, fair data makes Botty strong. Polluted data makes her sick.",
+      voerHint: "Tip: reliable, privacy-friendly and diverse = sustainable.",
+      sluitVoer: "Done",
+      dilemmaH2: "⚖️ Ethical dilemma",
+      sluitDilemma: "Got it!",
+      naamPlaceholder: "Give your Botty a name…",
+      startKnop: "Start the adventure!",
+      tutVorige: "Back",
+      tutVolgende: "Next",
+      tutLaatste: "Let's go!",
+      deelKnop: "Share",
+      kopieerKnop: "Copy",
+      sluitShare: "Close",
+      gedeeldBezoek: "🚪 Let in — come visit!",
+      gedeeldSpeel: "Play with your own Botty 🤖",
+      aiH2: "🤖 AI assistant",
+      aiVraag: "How much care do you hand over? Slide from left (you do everything) to right (AI does everything).",
+      aiHint: "Based on levels of automation (Inge Molenaar). Learn more via ❔ above.",
+      sluitAi: "Done",
+      nieuweGen: "Start a new generation 🥚",
+      gebSub: "Give Botty a name and a great start! Take good care of her — give her data, let her move, and solve dilemmas. Her mood (🧠) shows how she really feels. The more visitors there are, the happier she gets. If she thrives, she can start a new generation!",
+      gebTitel1: "A pile of loose parts…",
+      gebTitel2: "AI is initialising…",
+      gebTitel3: "🎉 Botty is assembled! 🎉",
+      eindeTitelSuffix: " has shut down",
+      leeftijdMinuut: "min",
+      leeftijdUur: "h",
+      leeftijdDag: " day",
+      leeftijdDagen: " days",
+      leeftijdPasgeboren: "newborn",
+      voedsel: [
+        {em:"📊", nm:"Anonymous learning results", goed:true},
+        {em:"📚", nm:"Open learning material", goed:true},
+        {em:"✅", nm:"Consent obtained", goed:true},
+        {em:"🌍", nm:"Diverse examples", goed:true},
+        {em:"🔎", nm:"Fact-checked", goed:true},
+        {em:"🔋", nm:"Energy-efficient training", goed:true},
+        {em:"🤝", nm:"Fairly shared data", goed:true},
+        {em:"📰", nm:"Fake news", goed:false},
+        {em:"⚖️", nm:"Biased data", goed:false},
+        {em:"🕵️", nm:"Stolen data", goed:false},
+        {em:"🗑️", nm:"Outdated info", goed:false},
+        {em:"🚫", nm:"Discriminatory examples", goed:false}
+      ],
+      dilemmas: [
+        {v:"A student lets AI write her essay. What do you advise the school?",keuzes:[
+          {t:"Ban AI entirely", w:1, r:"Banning seems safe, but students don't learn how to use AI wisely and fairly. Better: learn together."},
+          {t:"Learn how to use AI honestly", w:3, r:"Good choice! Students learn to use AI as a tool and to be honest about what they did themselves."},
+          {t:"Do nothing", w:0, r:"Without agreements, nobody knows what's allowed. Clear, fair guidelines help everyone."}]},
+        {v:"An AI predicts which students are at risk of dropping out. How do you use that?",keuzes:[
+          {t:"Use it to offer extra support", w:3, r:"Great! Predictions may help, never label. Humans decide, AI supports."},
+          {t:"Separate those students", w:0, r:"That's a label that works out unfairly. Predictions must not take away chances."},
+          {t:"Don't trust it at all", w:1, r:"Being cautious is good, but if the data is fair it can help. Stay critical."}]},
+        {v:"A free AI tool wants all student data, in exchange for free use.",keuzes:[
+          {t:"Sure, it's free!", w:0, r:"Nothing is truly free: you pay with privacy. Children's personal data deserves protection."},
+          {t:"Only give what is strictly needed", w:3, r:"Great! Collect as little data as possible (data minimisation). That is sustainable and privacy-friendly."},
+          {t:"First ask for consent and explanation", w:3, r:"Excellent! Transparency and consent are part of fair data."}]},
+        {v:"The AI keeps giving one group of students easier tasks. What is going on?",keuzes:[
+          {t:"Fine, nice and easy", w:0, r:"This could be bias: prejudices in the data. That is unfair and keeps differences in place."},
+          {t:"Investigate whether the data is skewed", w:3, r:"Exactly! Always check for bias so everyone gets fair chances."},
+          {t:"Just switch the AI off", w:1, r:"Understandable, but investigating first is smarter. Maybe the data can be fixed."}]},
+        {v:"An AI model costs an enormous amount of energy to train. What counts?",keuzes:[
+          {t:"Only whether it works well", w:1, r:"Working well matters, but sustainability counts too. Energy and environment belong in the choice."},
+          {t:"Also the energy and environment", w:3, r:"Good! Sustainable AI also looks at energy use. Sometimes a smaller model is enough."},
+          {t:"Doesn't matter", w:0, r:"It does matter: AI has a real footprint on our planet."}]},
+        {v:"A chatbot sometimes gives students a wrong answer with great confidence.",keuzes:[
+          {t:"Always believe what AI says", w:0, r:"AI can be convincing and wrong. Always keep thinking for yourself and check facts."},
+          {t:"Teach students to verify", w:3, r:"Strong! Critical thinking and fact-checking is the best protection against errors."},
+          {t:"Ban the chatbot", w:1, r:"Possible, but learning to deal with errors is more valuable than avoiding them."}]}
+      ],
+      aiNiveaus: [
+        {naam:"Off",           tag:"you do everything",  uitleg:"You take full care of Botty yourself and monitor the meters yourself.",                                band:"grows fully 💚"},
+        {naam:"Signalling",   tag:"AI gives a hint",     uitleg:"The AI monitors the meters and highlights the button that needs attention. You decide and act.",      band:"grows fully 💚"},
+        {naam:"Advising",     tag:"AI tips",             uitleg:"The AI gives you a tip on what to do best. You decide and act.",                                       band:"grows fully 💚"},
+        {naam:"Partial",      tag:"together",            uitleg:"The AI handles feeding and moving. Happiness, bugs and dilemmas stay with you.",                       band:"still growing well 💚"},
+        {naam:"Conditional",  tag:"AI with safety net",  uitleg:"The AI takes care of Botty and monitors the meters, but asks you to decide on dilemmas.",             band:"grows limited 🧡"},
+        {naam:"Full",         tag:"AI does everything",  uitleg:"The AI takes over everything, including dilemmas. You supervise. Only petting Botty grows the bond slightly.", band:"barely grows ❤️"}
+      ],
+      berichten: function(n){ return [
+        "You're taking full care of " + naam() + " yourself! 💚",
+        "The AI gives a hint when a button needs attention. You decide and act. 🔦",
+        "The AI gives tips on what you can do. You decide and act. 💡",
+        "The AI handles feeding and moving. Happiness, bugs and dilemmas stay with you. 🤖",
+        "The AI takes care of " + naam() + " itself, but asks you at dilemmas. 🤖",
+        "The AI takes full care of " + naam() + ", including dilemmas. You supervise. 🤖"
+      ][n]; },
+      aaiZinnen: ["Hehe! 😄","That tickles!","Aaah, nice ❤️","One more!","You're sweet 💚","*happy hum*"],
+      groetjes: ["👀","Hi!","🎵","Nice day, right?","🤖"],
+      bewegingen: ["Jumping jacks! 🤸","Surfing the data wave! 🏄","Dance break! 💃","Stretch and reach! 🙆","Run a loop! 🏃","Windmill arms! 💨","Robot dance! 🤖"],
+      jubel: ["Playing together is the best! 😄","What a party! 🎉","You're having fun together! 😁","Making friends makes Botty happy! 💞"],
+      doodTekst: function(oorzaak){ if(oorzaak==="ouderdom") return "After a long and wise life, "+naam()+" has peacefully shut down. 🌙"; if(oorzaak==="ziekte") return naam()+"'s bug wasn't fixed in time. 💔"; return naam()+" received too little care and shut down. 💔"; },
+      reflectieTekst: function(pctAi, band){ var regel = "🤖 The AI did "+pctAi+"% of the care, you "+(100-pctAi)+"%. Your bond reached "+band+"%. "; if(pctAi<=20) return regel+"You did almost everything yourself — see how personal attention makes the bond strong? 💚"; else if(pctAi<=60) return regel+"You shared care with the AI. A nice balance between help and personal attention. 🤝"; else return regel+"You left a lot to the AI. Handy — but real bond requires YOUR attention. 🧡"; },
+      reflectieLeeg: "There was too little care to say anything about.",
+      dagdeelGroet: function(h){ if(h<6) return "Good night"; if(h<12) return "Good morning ☀️"; if(h<18) return "Good afternoon"; if(h<22) return "Good evening 🌆"; return "It's late 😴"; },
+      stadiumLabels: {baby:"baby 👶", kind:"child", tiener:"teenager", volwassen:"adult"},
+      zegHoi: function(){ return "Hi, I'm "+naam()+"! Give me sustainable data 🍃"; },
+      zegDuurzaam: "Mmm, sustainable data! 😋",
+      zegVervuild: "Ugh! This data is polluted… 🤢",
+      zegBug: "Oh no… I have a bug! 🤒 Please fix me.",
+      zegGepatcht: "Phew, patched! Thank you 💚",
+      zegZiek: "I don't feel well… 🤒",
+      zegEnergie: "My energy is running low… keep attending to me! ⚡",
+      zegHonger: "I'm hungry for good data… 🍃",
+      zegBeweeg: "I want to move! 🤸",
+      zegNietLekker: ["I'm not feeling great… 🥺","I'm creaking a bit… 🛠️","Better next time! 🛠️"],
+      zegGaap: "*yawn* 😴",
+      zegWelkomGast: function(sn){ return "Hi "+sn+"! Welcome! 👋"; },
+      zegGastKomt: function(sn){ return "🤖 "+sn+" is visiting!"; },
+      zegTotZiens: "Bye! Come play again soon! 💚",
+      zegDilemma: "I have a dilemma for you… ⚖️",
+      zegAiTwijfelt: "🤖 The AI hesitates — you decide this dilemma. ⚖️",
+      toastAi: "Note: your bond only grows through YOUR attention 💚",
+      aiVoerTekst: function(dataBefore){ return state.uitlegbaar ? "🔍 Data was "+dataBefore+"% — feeding sustainable data 🍃" : "🤖 AI feeds sustainable data"; },
+      aiBeweegTekst: function(fitBefore){ return state.uitlegbaar ? "🔍 Fitness was "+fitBefore+"% — letting "+naam()+" move 🤸" : "🤖 AI lets "+naam()+" move"; },
+      aiHerstelTekst: function(){ return state.uitlegbaar ? "🔍 Bug detected → fixing the error 🛠️" : "🤖 AI fixes the bug"; },
+      aiTroostTekst: function(gelukBefore){ return state.uitlegbaar ? "🔍 Happiness was "+gelukBefore+"% — comforting "+naam()+" 💙" : "🤖 AI keeps "+naam()+" happy"; },
+      aiDilemmaTekst: function(beste){ return state.uitlegbaar ? "🔍 AI chose '"+beste.t+"' (+"+beste.w+" wisdom) ⚖️" : "🤖 AI chose wisely on a dilemma"; },
+      aiTickerUit: function(){ return "AI assistant is <b>off</b> — you care for "+naam()+" yourself."; },
+      aiTickerAan: function(n, inf){ return "AI · level "+n+" — <b>"+inf.naam+"</b> · "+inf.tag; },
+      signaleringBug: "🔍 Bug detected — fix button highlighted 🔦",
+      signaleringFit: function(pct){ return "🔍 Fitness "+pct+"% low — move button highlighted 🔦"; },
+      signaleringData: function(label, pct){ return "🔍 "+label+" "+pct+"% low — feed button highlighted 🔦"; },
+      adviesBug: function(){ return state.uitlegbaar ? "🔍 Bug present — tip: fix the error 🛠️" : "💡 Tip: fix "+naam()+"'s bug."; },
+      adviesFit: function(pct){ return state.uitlegbaar ? "🔍 Fitness "+pct+"% low — let "+naam()+" move." : "💡 Tip: Let "+naam()+" move."; },
+      adviesGeluk: function(pct){ return state.uitlegbaar ? "🔍 Happiness "+pct+"% low — give "+naam()+" attention — pet her." : "💡 Tip: Give "+naam()+" attention — pet her."; },
+      adviesData: function(label, pct){ return state.uitlegbaar ? "🔍 "+label+" "+pct+"% low — feed "+naam()+" sustainable data." : "💡 Tip: Feed "+naam()+" sustainable data."; },
+      welkomAfwezig: function(groet, duur){ return groet+"! You were away for "+duur+" — I missed you! 💚"; },
+      welkomTerug: function(groet){ return groet+"! Great to see you! 👋"; },
+      humanizeDag: function(d){ return d+(d===1?" day":" days"); },
+      humanizeUur: function(u){ return u+"h"; },
+      humanizeMin: function(m){ return m+" min"; },
+      dilemmaWijs: "Wise choice",
+      dilemmaNog: "Think again",
+      dilemmaBijna: "Almost",
+      bezoekTekst: function(sn){ return "🤖 "+sn+" is visiting!"; },
+      gastHallo: function(){ return "Hello "+naam()+"! 😊"; },
+      gastTotziens: "Goodbye! 👋",
+      deelTekstFn: function(){ return "My Botty is called "+naam()+" — "+leeftijdTekst()+" old, Generation "+state.generatie+", 🧠 wisdom "+state.wijs+", ⚡ energy "+Math.round(state.energie)+"%. Join in at NOLAI!"; },
+      gedeeldBadgeKan: function(sn){ return sn+" wants to visit "+naam()+"!<small>Let the guest Botty in — playing together makes them happy.</small>"; },
+      gedeeldBadgeNiet: function(sn){ return "🤖 "+sn+" is sharing their Botty with you!<small>Start your own Botty first; then they can visit each other.</small>"; },
+      gekopieerd: "Copied! 📋",
+      kopierenFout: "Could not copy",
+      kopierenNiet: "Copy not supported",
+      xaiAan: "Explainable AI on 🔍 — I'll explain why I act.",
+      xaiUit: "Explainable AI off.",
+      tutStappen: [
+        {e:"🤖", t:"Take good care of Botty", x:"Botty starts as a small robot. Take good care of her and she becomes strong and colourful. Neglect her and she'll get rust and a hunch, and won't feel well. She has 5 meters: energy, data, fitness, happiness and mood."},
+        {e:"🧠", t:"Mood", x:"The purple 🧠 bar shows Botty's state of mind — separate from her normal meters. Mood rises when there are visitors, when you care for her, or when the AI cares for her. It drops when Botty is alone for a long time or is sick. A high mood makes her happier and influences her emotion!"},
+        {e:"😊", t:"10 emotions", x:"Botty shows how she really feels:\n\n😄 enthusiastic · 😊 happy · 😌 calm\n🤔 curious · 🥺 lonely · 😟 sad\n😰 anxious · 😵 confused · 🥲 sick · 🦾 proud\n\nHer mood helps determine which emotion she shows. Take good care of her — you might be surprised!"},
+        {e:"👥", t:"Visitors", x:"The more people visit the hive, the happier Botty gets! Visitors automatically raise her mood. You can see the visitor count live at the top. Share the link with friends and make the hive lively!"},
+        {e:"🍃", t:"Feeding", x:"Give Botty sustainable, fair data. Refuse polluted data like fake news and bias. Good nutrition keeps her data bar full and benefits her mood."},
+        {e:"🤸", t:"Moving", x:"Let Botty move for her fitness — and it's fun too. Moving regularly keeps her bars up."},
+        {e:"⚖️", t:"Dilemmas", x:"Think together about AI in education and earn wisdom. Good choices build her happiness and bond with you."},
+        {e:"🤖", t:"AI assistant", x:"With the ⚡ slider you choose how much the AI takes over. The 6 steps follow the levels of automation by Inge Molenaar:\n\n0 · Off — you do everything\n1 · Signalling — AI highlights the right button\n2 · Advising — AI gives a tip\n3 · Partial — AI feeds & moves\n4 · Conditional — AI cares, but asks you on dilemmas\n5 · Full — AI does everything\n\nNote: AI care also affects Botty's mood!"},
+        {e:"🧬", t:"Generations", x:"If Botty is well cared for long enough, she can have a child! The child inherits genes from her — including a bit of mood. Each child starts a new generation. The further the generation, the prouder Botty can be. 🦾"},
+        {e:"🚪", t:"Visiting", x:"Share Botty's link (📤) with a friend. When they open the link, your Botty visits them — and that does her mood good! If you get a link, click 'Let in'. Playing together makes your Botty happier. 💞"},
+        {e:"⌨️", t:"Shortcuts", x:"Control Botty quickly with your keyboard:\n\n1 · Feed\n2 · Move\n3 · Dilemma\n4 · Fix bug (only when Botty is sick)\n\nIn the feed screen: choose card 1–4 with the number.\nIn a dilemma: choose answer 1–3 with the number."},
+        {e:"🌞", t:"Day & night", x:"The sun rises and sets with the real clock. At night the moon shines. Botty's mood can also fluctuate with the time of day!"}
+      ]
+    }
+  };
+
+  function setLang(lang){
+    huidigeLang = lang;
+    huidigeT = T[lang] || T.nl;
+    // Update static HTML elements
+    var ondertitelEl = document.querySelector(".ondertitel");
+    if(ondertitelEl) ondertitelEl.textContent = huidigeT.ondertitel;
+    var btnHelp = document.getElementById("btn-help");
+    if(btnHelp){ btnHelp.setAttribute("aria-label", huidigeT.btnHelp); btnHelp.setAttribute("title", huidigeT.btnHelp); }
+    var btnShare = document.getElementById("btn-share");
+    if(btnShare){ btnShare.setAttribute("aria-label", huidigeT.btnShare); btnShare.setAttribute("title", huidigeT.btnShare); }
+    var btnMute = document.getElementById("btn-mute");
+    if(btnMute){ btnMute.setAttribute("aria-label", huidigeT.btnMuteLabel); btnMute.setAttribute("title", huidigeT.btnMuteTitle); }
+    var btnAi = document.getElementById("ai-toggle");
+    if(btnAi){ btnAi.setAttribute("aria-label", huidigeT.btnAiLabel); }
+    var btnHerstel = document.getElementById("btn-herstel");
+    if(btnHerstel){
+      // Text node is first child before the kbd
+      for(var hc=0;hc<btnHerstel.childNodes.length;hc++){
+        if(btnHerstel.childNodes[hc].nodeType===3){ btnHerstel.childNodes[hc].textContent=huidigeT.btnHerstel+" "; break; }
+      }
+    }
+    var btnSamen = document.getElementById("btn-samenspelen");
+    if(btnSamen) btnSamen.textContent = huidigeT.btnSamenspelen;
+    var btnTotziens = document.getElementById("btn-totziens");
+    if(btnTotziens) btnTotziens.textContent = huidigeT.btnTotziens;
+    // Feed/Move button text (the text node after the .ico span)
+    function setKnopTekst(id, tekst){
+      var btn = document.getElementById(id);
+      if(!btn) return;
+      // Find last text node and update it
+      for(var c=btn.childNodes.length-1;c>=0;c--){
+        if(btn.childNodes[c].nodeType===3){ btn.childNodes[c].textContent=tekst; return; }
+      }
+    }
+    setKnopTekst("btn-voer", huidigeT.btnVoerTekst);
+    setKnopTekst("btn-beweeg", huidigeT.btnBeweegTekst);
+    // Modals
+    var voerH2 = document.querySelector("#overlay-voer h2");
+    if(voerH2) voerH2.textContent = huidigeT.voerH2;
+    var voerVraag = document.querySelector("#overlay-voer .vraag");
+    if(voerVraag) voerVraag.textContent = huidigeT.voerVraag;
+    var voerHint = document.querySelector("#overlay-voer .hint");
+    if(voerHint) voerHint.textContent = huidigeT.voerHint;
+    var sluitVoer = document.getElementById("sluit-voer");
+    if(sluitVoer) sluitVoer.textContent = huidigeT.sluitVoer;
+    var dilemmaH2 = document.querySelector("#overlay-dilemma h2");
+    if(dilemmaH2) dilemmaH2.textContent = huidigeT.dilemmaH2;
+    var sluitDil = document.getElementById("sluit-dilemma");
+    if(sluitDil) sluitDil.textContent = huidigeT.sluitDilemma;
+    var naamInput = document.getElementById("naam-input");
+    if(naamInput) naamInput.placeholder = huidigeT.naamPlaceholder;
+    var startKnop = document.getElementById("start-knop");
+    if(startKnop) startKnop.textContent = huidigeT.startKnop;
+    var tutVorige = document.getElementById("tut-vorige");
+    if(tutVorige) tutVorige.textContent = huidigeT.tutVorige;
+    var deelKnop = document.getElementById("deel-knop");
+    if(deelKnop) deelKnop.textContent = huidigeT.deelKnop;
+    var kopieerKnop = document.getElementById("kopieer-knop");
+    if(kopieerKnop) kopieerKnop.textContent = huidigeT.kopieerKnop;
+    var sluitShare = document.getElementById("sluit-share");
+    if(sluitShare) sluitShare.textContent = huidigeT.sluitShare;
+    var gedeeldBezoek = document.getElementById("gedeeld-bezoek");
+    if(gedeeldBezoek) gedeeldBezoek.textContent = huidigeT.gedeeldBezoek;
+    var gedeeldSpeel = document.getElementById("gedeeld-speel");
+    if(gedeeldSpeel) gedeeldSpeel.textContent = huidigeT.gedeeldSpeel;
+    var aiH2 = document.querySelector("#overlay-ai h2");
+    if(aiH2) aiH2.textContent = huidigeT.aiH2;
+    var aiVraag = document.querySelector("#overlay-ai .vraag");
+    if(aiVraag) aiVraag.textContent = huidigeT.aiVraag;
+    var aiHint = document.querySelector("#overlay-ai .hint");
+    if(aiHint) aiHint.textContent = huidigeT.aiHint;
+    var sluitAi = document.getElementById("sluit-ai");
+    if(sluitAi) sluitAi.textContent = huidigeT.sluitAi;
+    var nieuweGen = document.getElementById("nieuwe-gen");
+    if(nieuweGen) nieuweGen.textContent = huidigeT.nieuweGen;
+    var gebSub = document.getElementById("geb-sub");
+    if(gebSub) gebSub.textContent = huidigeT.gebSub;
+  }
+
+  var KEY = "botty-tamagotchi-v3";
+  var DAG = 86400000;
+  var nu = function(){ return Date.now(); };
+
+  // ---------- Opslag: localStorage met cookie-fallback ----------
+  // Schrijft naar zowel localStorage als een cookie (1 jaar geldig). Lukt het één niet
+  // (privémodus, geblokkeerde storage), dan vangt de ander het op. Lezen probeert ze in die volgorde.
+  function schrijfRuw(k,v){
+    try{ localStorage.setItem(k,v); }catch(e){}
+    try{ document.cookie = k+"="+encodeURIComponent(v)+";max-age=31536000;path=/;SameSite=Lax"; }catch(e){}
+  }
+  function leesRuw(k){
+    try{ var v=localStorage.getItem(k); if(v!==null && v!==undefined) return v; }catch(e){}  // eerst localStorage
+    try{
+      var m=document.cookie.match(new RegExp("(?:^|; )"+k+"=([^;]*)"));
+      if(m) return decodeURIComponent(m[1]);
+    }catch(e){}
+    return null;
+  }
+
+  function standaard(){
+    return { geboren:false, geboortetijd:0, generatie:1,
+             data:0, fit:0, geluk:0, wijs:0, energie:0, t:nu(), laatsteDilemma:nu(),
+             geluid:true, tutorialKlaar:false, naam:"Botty",
+             ziek:false, ziekSinds:0, leegSinds:0, stadium:"baby",
+             aiNiveau:0, band:0, zorgAi:0, zorgJij:0, uitlegbaar:false };
+  }
+  // Laadt opgeslagen state. Oudere opslag mist mogelijk nieuwere velden, daarom vult
+  // elke regel hieronder een ontbrekend veld aan met een veilige standaardwaarde (migratie).
+  function laad(){
+    try{
+      var s = JSON.parse(leesRuw(KEY));
+      if(s && typeof s.data === "number"){          // herken geldige state aan het verplichte 'data'-getal
+        if(typeof s.energie !== "number") s.energie = 0;
+        if(typeof s.geluid !== "boolean") s.geluid = true;
+        if(typeof s.tutorialKlaar !== "boolean") s.tutorialKlaar = false;
+        if(typeof s.ziek !== "boolean") s.ziek = false;
+        if(typeof s.ziekSinds !== "number") s.ziekSinds = 0;
+        if(typeof s.leegSinds !== "number") s.leegSinds = 0;
+        if(typeof s.stadium !== "string") s.stadium = "baby";
+        if(typeof s.naam !== "string" || !s.naam) s.naam = "Botty";
+        // AI-niveau (0–5). Oude opslag kende alleen aiVerzorger (aan/uit) → uit=0, aan=5 (volledig).
+        if(typeof s.aiNiveau !== "number"){ s.aiNiveau = s.aiVerzorger ? 5 : 0; }
+        if(s.aiNiveau < 0 || s.aiNiveau > 5) s.aiNiveau = 0;
+        if(typeof s.band !== "number") s.band = 0;
+        if(typeof s.zorgAi !== "number") s.zorgAi = 0;     // tellers voor het reflectiescherm
+        if(typeof s.zorgJij !== "number") s.zorgJij = 0;
+        if(typeof s.uitlegbaar !== "boolean") s.uitlegbaar = false;
+        return s;
+      }
+    }catch(e){}
+    return standaard();
+  }
+  var state = laad();
+  // state.t = tijdstempel van de laatste verval-berekening. Zolang Botty niet geboren is
+  // schuift 't mee met nu(), zodat er geen verval wordt "opgespaard" vóór de geboorte.
+  function bewaar(){ state.t = state.geboren ? state.t : nu(); schrijfRuw(KEY, JSON.stringify(state)); }
+  function klem(v){ return Math.max(0, Math.min(100, v)); }   // begrens elke meter op 0–100
+  function naam(){ return (state.naam && state.naam.length) ? state.naam : "Botty"; }
+  function gemWelzijn(){ return (state.data + state.fit + state.geluk + state.energie)/4; }   // gemiddeld welzijn 0–100
+  // Telt wie een delegeerbare zorgtaak deed (voeren/bewegen/bugfix/dilemma), voor de eind-reflectie.
+  function telZorg(doorAi){ if(doorAi) state.zorgAi++; else state.zorgJij++; }
+
+  // ---------- Verval over tijd (catch-up bij reload) ----------
+  // Rekent het verval uit over de échte tijd die verstreken is sinds state.t.
+  // Zo "loopt" Botty ook door terwijl de pagina dicht was (catch-up bij reload).
+  function verval(){
+    if(!state.geboren){ return; }
+    var dt = (nu() - state.t)/1000;                   // verstreken seconden sinds laatste meting
+    if(dt <= 0){ state.t = nu(); return; }            // klok terug-/stilgezet → niets doen
+    var zf = state.ziek ? 1.8 : 1;                    // ziek → 1,8× sneller verval
+    // Lineair verval per seconde (waarden gekozen op speeltempo van enkele minuten):
+    state.data = klem(state.data - dt*0.06*zf);
+    state.fit  = klem(state.fit  - dt*0.045*zf);
+    state.energie = klem(state.energie - dt*0.09*zf); // ~5,4 / min — daalt het snelst
+    // Geluk volgt traag het gemiddelde van de drie verzorgmeters (voortschrijdend gemiddelde):
+    // is de verzorging goed dan stijgt geluk vanzelf, verwaarloos je Botty dan zakt het.
+    var doel = (state.data + state.fit + state.energie)/3;
+    state.geluk = klem(state.geluk + (doel - state.geluk) * Math.min(1, dt*0.01));
+    if(state.ziek) state.geluk = klem(state.geluk - dt*0.05);  // ziek-zijn drukt het geluk extra
+    state.band = klem(state.band - dt*0.004);   // band vervaagt langzaam; groeit alleen door jóuw aandacht
+    state.t = nu();                             // tijdstempel bijwerken voor de volgende ronde
+  }
+
+  // ---------- DOM ----------
+  var el = function(id){ return document.getElementById(id); };
+  var botty = el("botty");
+  var mond = el("mond");
+  var ballon = el("ballon");
+
+  function leeftijdTekst(){
+    var ms = nu() - state.geboortetijd;
+    var min = ms/60000, uur = min/60, dag = uur/24;
+    var d = Math.floor(dag);
+    if(dag >= 1) return d + (d===1 ? huidigeT.leeftijdDag : huidigeT.leeftijdDagen);
+    if(uur >= 1) return Math.floor(uur) + " " + huidigeT.leeftijdUur;
+    if(min >= 1) return Math.floor(min) + " " + huidigeT.leeftijdMinuut;
+    return huidigeT.leeftijdPasgeboren;
+  }
+
+  function render(){
+    el("bar-energie").style.width = state.energie + "%";
+    el("bar-data").style.width = state.data + "%";
+    el("bar-fit").style.width  = state.fit + "%";
+    el("bar-geluk").style.width= state.geluk + "%";
+    el("bar-wijs").style.width = Math.min(100, state.wijs*10) + "%";
+    el("bar-band").style.width = state.band + "%";
+    el("t-band").textContent = Math.round(state.band) + "%";
+    el("t-energie").textContent = Math.round(state.energie) + "%";
+    el("t-data").textContent = Math.round(state.data) + "%";
+    el("t-fit").textContent  = Math.round(state.fit) + "%";
+    el("t-geluk").textContent= Math.round(state.geluk) + "%";
+    el("t-wijs").textContent = state.wijs;
+    el("leef-gen").textContent = state.geboren ? (naam() + " · Gen " + state.generatie) : ("Generatie " + state.generatie);
+    el("leef-leeftijd").textContent = state.geboren ? (stadium().label + " · 🎂 " + leeftijdTekst()) : "—";
+    stemming();
+  }
+
+  // ---------- Mond-expressies ----------
+  var monden = {
+    blij:    "M93,97 Q100,101 107,97 Q106,108 100,109 Q94,108 93,97 Z",
+    neutraal:"M94,100 Q100,102 106,100 Q105,106 100,107 Q95,106 94,100 Z",
+    sip:     "M94,108 Q100,102 106,108 Q104,110 100,109 Q96,110 94,108 Z",
+    open:    "M92,96 Q100,99 108,96 Q109,112 100,114 Q91,112 92,96 Z",
+    verrast: "M96,99 Q100,98 104,99 Q105,107 100,108 Q95,107 96,99 Z"
+  };
+  function zetMond(naam){ mond.setAttribute("d", monden[naam] || monden.neutraal); }
+
+  // Bepaalt de rust-uitdrukking aan de hand van het gemiddelde welzijn.
+  // Wordt overgeslagen tijdens een lopende animatie of speciale ogen (verliefd/slaap/verrast),
+  // zodat die niet worden overschreven.
+  function stemming(){
+    if(huidigeAnim) return;
+    if(botty.classList.contains("verliefd") || botty.classList.contains("slaap") || botty.classList.contains("verrast")) return;
+    if(!state.geboren) return;
+    var gem = gemWelzijn();   // gemiddeld welzijn 0–100
+    botty.classList.remove("sip");
+    if(state.ziek){ botty.classList.add("sip"); zetMond("sip"); return; }  // ziek gaat vóór alles → altijd sip
+    if(gem < 35){ botty.classList.add("sip"); zetMond("sip"); }            // < 35 = ongelukkig: hangende houding
+    else if(gem > 75){ zetMond("blij"); }                                 // > 75 = blij
+    else { zetMond("neutraal"); }                                         // 35–75 = neutraal
+  }
+
+  // ---------- Animaties ----------
+  // Er speelt steeds maar één animatie tegelijk: 'huidigeAnim' onthoudt welke,
+  // 'animTimer' ruimt 'm na 'ms' weer op. Een nieuwe animatie vervangt de oude.
+  var huidigeAnim = null;
+  var animTimer = null;
+  function speel(klasse, ms, mondNaam){
+    if(animTimer){ clearTimeout(animTimer); }       // lopende opruim-timer annuleren
+    if(huidigeAnim){ botty.classList.remove(huidigeAnim); }  // vorige animatie direct stoppen
+    huidigeAnim = klasse;
+    botty.classList.remove("sip");
+    botty.classList.add(klasse);
+    if(mondNaam) zetMond(mondNaam);
+    // ms >= 100000 betekent "blijf staan tot stopAnim()" (bv. 'denk' wacht op een keuze);
+    // alleen kortere animaties worden automatisch teruggezet naar de rust-stemming.
+    if(ms < 100000){
+      animTimer = setTimeout(function(){
+        botty.classList.remove(klasse);
+        huidigeAnim = null; animTimer = null;
+        stemming();
+      }, ms);
+    }
+  }
+  function stopAnim(){
+    if(animTimer){ clearTimeout(animTimer); animTimer = null; }
+    if(huidigeAnim){ botty.classList.remove(huidigeAnim); huidigeAnim = null; }
+    stemming();
+  }
+
+  // ---------- Tekstballon ----------
+  var ballonTimer = null;
+  function zeg(tekst, ms){
+    ballon.textContent = tekst;
+    ballon.classList.add("toon");
+    if(ballonTimer) clearTimeout(ballonTimer);
+    ballonTimer = setTimeout(function(){ ballon.classList.remove("toon"); }, ms || 3200);
+  }
+
+  function floater(tekst, kleur){
+    var f = document.createElement("div");
+    f.className = "floater";
+    f.textContent = tekst;
+    f.style.color = kleur;
+    f.style.left = (45 + Math.random()*30) + "%";
+    f.style.top = "120px";
+    botty.parentNode.appendChild(f);
+    setTimeout(function(){ f.remove(); }, 1100);
+  }
+
+  var modalOpen = function(){ return !!document.querySelector(".overlay.open"); };
+
+  var reduce = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+
+  // ================= GELUID (Web Audio, geen bestanden) =================
+  var audioCtx = null;
+  function audio(){
+    if(!state.geluid) return null;
+    if(!audioCtx){ try{ audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }catch(e){ return null; } }
+    if(audioCtx.state === "suspended"){ audioCtx.resume(); }
+    return audioCtx;
+  }
+  function toon(freq, start, dur, type, vol){
+    var ac = audio(); if(!ac) return;
+    var o = ac.createOscillator(), g = ac.createGain();
+    o.type = type || "sine"; o.frequency.value = freq;
+    var t0 = ac.currentTime + (start||0);
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(vol||0.16, t0+0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0+(dur||0.15));
+    o.connect(g); g.connect(ac.destination);
+    o.start(t0); o.stop(t0+(dur||0.15)+0.03);
+  }
+  var sfx = {
+    klik:  function(){ toon(420,0,0.06,"triangle",0.1); },
+    eet:   function(){ toon(300,0,0.07,"square",0.1); toon(360,0.08,0.07,"square",0.1); },
+    goed:  function(){ toon(523,0,0.1,"sine",0.14); toon(784,0.1,0.16,"sine",0.14); },
+    fout:  function(){ toon(170,0,0.26,"sawtooth",0.14); },
+    beweeg:function(){ toon(300,0,0.16,"sine",0.14); toon(540,0.12,0.13,"sine",0.12); },
+    denk:  function(){ toon(660,0,0.1,"triangle",0.1); },
+    feest: function(){ [523,659,784,1047].forEach(function(f,i){ toon(f,i*0.11,0.2,"triangle",0.16); }); },
+    einde: function(){ [523,415,330,262].forEach(function(f,i){ toon(f,i*0.18,0.3,"sine",0.16); }); },
+    aai:   function(){ toon(720,0,0.07,"sine",0.09); toon(940,0.06,0.08,"sine",0.08); }
+  };
+  function updateMuteIcon(){ el("btn-mute").textContent = state.geluid ? "🔊" : "🔇"; }
+  el("btn-mute").addEventListener("click", function(){
+    state.geluid = !state.geluid; updateMuteIcon(); bewaar();
+    if(state.geluid){ audio(); sfx.klik(); }
+  });
+
+  // ================= JUICE =================
+  function flitsBalk(sel){ var e=document.querySelector(sel); if(e){ e.classList.add("flits"); setTimeout(function(){ e.classList.remove("flits"); },520); } }
+  function schud(){ if(reduce) return; var t=document.querySelector(".toestel"); t.classList.add("schud"); setTimeout(function(){ t.classList.remove("schud"); },440); }
+  function sparkles(){
+    if(reduce) return;
+    for(var i=0;i<5;i++){
+      var f=document.createElement("div"); f.className="floater"; f.textContent="✨"; f.style.color="#ffd54a";
+      f.style.left=(35+Math.random()*40)+"%"; f.style.top=(90+Math.random()*40)+"px";
+      botty.parentNode.appendChild(f);
+      (function(node){ setTimeout(function(){ node.remove(); },1100); })(f);
+    }
+  }
+  function hartjes(){
+    if(reduce) return;
+    var hs=["❤️","💛","💚","✨"];
+    for(var i=0;i<4;i++){
+      var f=document.createElement("div"); f.className="floater"; f.textContent=hs[Math.floor(Math.random()*hs.length)];
+      f.style.left=(38+Math.random()*30)+"%"; f.style.top=(70+Math.random()*40)+"px";
+      botty.parentNode.appendChild(f);
+      (function(node){ setTimeout(function(){ node.remove(); },1100); })(f);
+    }
+  }
+
+  // ---------- Gezichtsuitdrukkingen ----------
+  var gezichtTimer=null;
+  function gezicht(klasse, ms, mondNaam){
+    botty.classList.remove("verliefd","slaap","verrast");
+    if(klasse) botty.classList.add(klasse);
+    if(mondNaam) zetMond(mondNaam);
+    if(gezichtTimer){ clearTimeout(gezichtTimer); gezichtTimer=null; }
+    if(klasse && ms){ gezichtTimer=setTimeout(function(){ botty.classList.remove(klasse); gezichtTimer=null; stemming(); }, ms); }
+  }
+
+  // ---------- Aaien ----------
+  var laatsteAai=0;
+  function aai(){
+    if(!state.geboren || modalOpen()) return;
+    hartjes(); sfx.aai();
+    gezicht("verliefd", 1300, "blij");
+    if(!huidigeAnim) speel("wuif", 1600, "blij");
+    var t=nu();
+    if(t-laatsteAai > 2500){
+      laatsteAai=t;
+      state.geluk=klem(state.geluk+3);
+      state.band=klem(state.band+4);   // jóuw aandacht versterkt de band
+      flitsBalk(".b-band");
+      var aaiZinnen = huidigeT.aaiZinnen;
+      if(Math.random()<0.5) zeg(aaiZinnen[Math.floor(Math.random()*aaiZinnen.length)], 1800);
+      bewaar(); render();
+    }
+  }
+  botty.addEventListener("click", aai);
+
+  // ================= DAG/NACHT + ZON =================
+  var zonEl=el("zon"), maanEl=el("maan"), sterrenEl=el("sterren"), sceneEl=el("scene");
+  (function bouwSterren(){
+    for(var i=0;i<32;i++){
+      var s=document.createElement("div"); s.className="ster";
+      s.style.left=(Math.random()*100)+"%"; s.style.top=(Math.random()*58)+"%";
+      s.style.animationDelay=(Math.random()*3)+"s";
+      sterrenEl.appendChild(s);
+    }
+  })();
+  function skyGrad(h){
+    if(h>=8 && h<17)  return "linear-gradient(180deg,#86c8ff 0%,#bfe6ff 45%,#e9f8ef 100%)";   // dag
+    if(h>=17 && h<20) return "linear-gradient(180deg,#f6a85f 0%,#ffd2a6 55%,#ffe9cf 100%)";   // avond
+    if(h===20)        return "linear-gradient(180deg,#7a5a8f 0%,#d98f7a 60%,#f0c9a0 100%)";   // zonsondergang
+    if(h>=21 || h<6)  return "linear-gradient(180deg,#16233f 0%,#243a55 70%,#33506e 100%)";   // nacht
+    return "linear-gradient(180deg,#f2a65a 0%,#ffd9b0 55%,#fdeccf 100%)";                     // dageraad (6-8)
+  }
+  function schaduwBomen(off, sx, op){
+    var s=document.querySelectorAll(".boom-schaduw");
+    for(var i=0;i<s.length;i++){ s[i].style.transform="translateX("+off+"px) scaleX("+sx+")"; s[i].style.opacity=op; }
+  }
+  function updateLucht(){
+    var h = new Date().getHours();
+    var dag = (h>=8 && h<=20);            // zon op tussen 8 en 20 uur
+    sceneEl.style.background = skyGrad(h);
+    sceneEl.classList.toggle("nacht", !dag);
+    sterrenEl.classList.toggle("toon", !dag);
+    if(dag){
+      zonEl.style.opacity=1; maanEl.style.opacity=0;
+      var fx = (h<=12) ? (h-8)/8 : 0.5+(h-12)/16;   // 0 om 8u, 0.5 om 12u, 1 om 20u
+      zonEl.style.left=(10+fx*80)+"%";
+      zonEl.style.top =(72-Math.sin(fx*Math.PI)*60)+"%";  // hoogste punt om 12.00
+      var dir=(0.5-fx)*2, kracht=Math.abs(0.5-fx)*2;       // 0 om 12.00 → geen schaduw
+      schaduwBomen(dir*26, 0.3+kracht*1.7, kracht*0.33);
+    }else{
+      zonEl.style.opacity=0; maanEl.style.opacity=1;
+      var nh=(h>=20)? h-20 : h+4, nfx=nh/12;
+      maanEl.style.left=(10+nfx*80)+"%";
+      maanEl.style.top =(72-Math.sin(nfx*Math.PI)*55)+"%";
+      schaduwBomen(0,0.3,0);                                // 's nachts geen zonneschaduw
+    }
+  }
+  function planVolgendUur(){
+    var d=new Date();
+    var ms=(60-d.getMinutes())*60000 - d.getSeconds()*1000 - d.getMilliseconds();
+    setTimeout(function(){ updateLucht(); planVolgendUur(); }, Math.max(1000, ms));
+  }
+
+  // ================= VOGELS (onregelmatig, ver weg) =================
+  function spawnVogels(){
+    if(reduce) return;
+    var h=new Date().getHours();
+    if(h<7 || h>20) return;               // alleen bij daglicht
+    var laag=el("vogels");
+    var zwerm=document.createElement("div");
+    var rechts=Math.random()<0.5;
+    zwerm.className="zwerm "+(rechts?"rechts":"links");
+    zwerm.style.top=(6+Math.random()*26)+"%";
+    var dur=13+Math.random()*9;
+    zwerm.style.animationDuration=dur+"s";
+    var n=2+Math.floor(Math.random()*3);
+    for(var i=0;i<n;i++){
+      var b=document.createElement("div"); b.className="vogel";
+      b.style.animationDelay=(Math.random()*0.3)+"s";
+      b.innerHTML='<svg viewBox="0 0 16 8"><path d="M1 6 Q4 1 8 5 Q12 1 15 6" fill="none" stroke="#5a6b7a" stroke-width="1.4" stroke-linecap="round"/></svg>';
+      zwerm.appendChild(b);
+    }
+    laag.appendChild(zwerm);
+    if(state.geboren && !huidigeAnim && !modalOpen() && !bezoekActief && Math.random()<0.5){ speel("kijk", 2000, "neutraal"); }
+    setTimeout(function(){ zwerm.remove(); }, dur*1000+300);
+  }
+  function planVogels(){ setTimeout(function(){ spawnVogels(); planVogels(); }, 15000+Math.random()*25000); }
+
+  // ================= TUTORIAL =================
+  var tutI=0;
+  function toonTut(i){
+    var tutStappen = huidigeT.tutStappen;
+    tutI=i; var s=tutStappen[i];
+    el("tut-emoji").textContent=s.e; el("tut-titel").textContent=s.t; el("tut-tekst").textContent=s.x;
+    var d=el("tut-stippen"); d.innerHTML="";
+    for(var j=0;j<tutStappen.length;j++){ var sp=document.createElement("span"); sp.className="tut-stip"+(j===i?" actief":""); d.appendChild(sp); }
+    el("tut-vorige").style.visibility = i===0 ? "hidden" : "visible";
+    var last = (i===tutStappen.length-1);
+    el("tut-volgende").textContent = last ? huidigeT.tutLaatste : huidigeT.tutVolgende;
+  }
+  function startTut(){ el("overlay-tutorial").classList.add("open"); toonTut(0); }
+  el("tut-vorige").addEventListener("click", function(){ sfx.klik(); if(tutI>0) toonTut(tutI-1); });
+  el("tut-volgende").addEventListener("click", function(){
+    sfx.klik();
+    if(tutI<huidigeT.tutStappen.length-1){ toonTut(tutI+1); }
+    else { el("overlay-tutorial").classList.remove("open"); state.tutorialKlaar=true; bewaar(); }
+  });
+  el("btn-help").addEventListener("click", function(){ sfx.klik(); startTut(); });
+
+  // ================= DELEN =================
+  // Bij delen leggen we de huidige staat van Botty vast in een compacte momentopname (snapshot)
+  // en coderen die in de deellink (#b=…). Wie de link opent, ziet exact deze Botty terug —
+  // leeftijd, meters en look — zonder dat zijn eigen spel wordt overschreven.
+
+  // UTF-8-veilige, URL-veilige base64 (emoji's in de naam blijven zo heel).
+  function b64enc(str){ return btoa(unescape(encodeURIComponent(str))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,""); }
+  function b64dec(b){ b=b.replace(/-/g,"+").replace(/_/g,"/"); return decodeURIComponent(escape(atob(b))); }
+
+  // Legt vast wat de deelkaart toont. Korte sleutels houden de link kort.
+  // De look (vitaal/verwaarloosd) lezen we van de live tekening, zodat de snapshot
+  // precies overeenkomt met wat de speler op dat moment ziet.
+  function bouwSnapshot(){
+    var st = stadium();
+    var lk = botty.classList.contains("vitaal") ? "vitaal"
+           : botty.classList.contains("verwaarloosd") ? "verwaarloosd" : "normaal";
+    return { n:naam(), g:state.generatie, lt:leeftijdTekst(), sl:st.label, sk:st.key,
+             gr:st.groei, lk:lk, z:state.ziek?1:0, w:state.wijs,
+             e:Math.round(state.energie), d:Math.round(state.data),
+             f:Math.round(state.fit), gl:Math.round(state.geluk), b:Math.round(state.band) };
+  }
+  function deelURL(){ return "https://botty.ramonmoorlag.nl/#b=" + b64enc(JSON.stringify(bouwSnapshot())); }
+  function deelTekst(){ return huidigeT.deelTekstFn(); }
+
+  function toastMsg(t){ var e=el("toast"); e.textContent=t; e.classList.add("toon"); if(toastMsg._tm)clearTimeout(toastMsg._tm); toastMsg._tm=setTimeout(function(){ e.classList.remove("toon"); },2200); }
+  function kopieer(txt){
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(function(){ toastMsg(huidigeT.gekopieerd); }, function(){ toastMsg(huidigeT.kopierenFout); });
+    } else { toastMsg(huidigeT.kopierenNiet); }
+  }
+
+  // Vult een deelkaart (eigen preview én de gedeelde kaart) op basis van een snapshot.
+  // De gekloonde SVG krijgt een eigen .botty-wrap met de juiste look-klassen, zodat
+  // de class-based look-CSS (vitaal/verwaarloosd) ook op de kloon werkt.
+  function vulKaart(holder, naamEl, regelsEl, s){
+    holder.innerHTML="";
+    var svg=document.querySelector("#botty svg");
+    if(svg){
+      var wrap=document.createElement("div");
+      wrap.className="botty-wrap"+(s.lk==="vitaal"?" vitaal":"")+(s.lk==="verwaarloosd"?" verwaarloosd":"");
+      var c=svg.cloneNode(true); var ids=c.querySelectorAll("[id]"); for(var i=0;i<ids.length;i++){ ids[i].removeAttribute("id"); }
+      c.style.setProperty("--groei", s.gr); wrap.appendChild(c); holder.appendChild(wrap);
+    }
+    naamEl.textContent = s.n + (s.z ? " 🤒" : "");
+    regelsEl.innerHTML = "🎂 "+s.lt+" oud · Generatie "+s.g+" · "+s.sl
+      + "<br>🧠 Wijsheid "+s.w+" · ⚡ Energie "+s.e+"%"
+      + "<br>🍃 Data "+s.d+"% · 🤸 Fit "+s.f+"% · 😊 Geluk "+s.gl+"% · 💞 Band "+s.b+"%";
+  }
+
+  el("btn-share").addEventListener("click", function(){
+    sfx.klik();
+    vulKaart(el("share-botty"), el("share-naam"), el("share-regels"), bouwSnapshot());
+    el("overlay-share").classList.add("open");
+  });
+  el("sluit-share").addEventListener("click", function(){ el("overlay-share").classList.remove("open"); });
+  el("deel-knop").addEventListener("click", function(){
+    var txt=deelTekst();
+    if(navigator.share){ navigator.share({title:"Botty — NOLAI", text:txt, url:deelURL()}).catch(function(){}); }
+    else { kopieer(txt+" "+deelURL()); }
+  });
+  el("kopieer-knop").addEventListener("click", function(){ kopieer(deelTekst()+" "+deelURL()); });
+
+  // ---------- Een gedeelde Botty openen (#b=-link) ----------
+  // Decodeert de snapshot uit de hash en toont 'm read-only. Mislukt het decoderen,
+  // dan negeren we de hash en start het normale spel.
+  function leesGedeeld(){
+    var m = (location.hash || "").match(/[#&]b=([^&]+)/);
+    if(!m) return null;
+    try{ var s = JSON.parse(b64dec(m[1])); return (s && typeof s.g === "number") ? s : null; }
+    catch(e){ return null; }
+  }
+  var gedeeldeSnap = null;   // onthoudt wie er via de link langs wil komen
+  function wisHash(){
+    if(history.replaceState){ history.replaceState(null, "", location.pathname + location.search); }
+    else { location.hash = ""; }
+  }
+  function toonGedeeld(s){
+    gedeeldeSnap = s;
+    vulKaart(el("gedeeld-botty"), el("gedeeld-naam"), el("gedeeld-regels"), s);
+    // Heeft de speler zelf al een Botty? Dan kan de gast op bezoek; anders alleen de kaart tonen.
+    var kanBezoek = state.geboren;
+    el("gedeeld-bezoek").style.display = kanBezoek ? "" : "none";
+    el("gedeeld-badge").innerHTML = kanBezoek
+      ? huidigeT.gedeeldBadgeKan(s.n)
+      : huidigeT.gedeeldBadgeNiet(s.n);
+    el("overlay-gedeeld").classList.add("open");
+  }
+  // "Speel zelf": sluit de gedeelde kaart, wis de hash uit de URL en ga verder met het eigen spel.
+  el("gedeeld-speel").addEventListener("click", function(){
+    sfx.klik();
+    el("overlay-gedeeld").classList.remove("open");
+    wisHash();
+    if(!state.geboren && !el("overlay-einde").classList.contains("open")){ el("overlay-geboorte").classList.add("open"); }
+  });
+  // "Laat binnen": sluit de kaart en laat de gast-Botty de scène in lopen.
+  el("gedeeld-bezoek").addEventListener("click", function(){
+    sfx.klik();
+    el("overlay-gedeeld").classList.remove("open");
+    wisHash();
+    startBezoek(gedeeldeSnap);
+  });
+
+  // ---------- Bezoek: een gast-Botty komt langs ----------
+  var bezoekActief = false;
+  var gastBallonTimer = null;
+  function gastZeg(tekst, ms){
+    var b = el("gast-ballon");
+    b.textContent = tekst; b.classList.add("toon");
+    if(gastBallonTimer) clearTimeout(gastBallonTimer);
+    gastBallonTimer = setTimeout(function(){ b.classList.remove("toon"); }, ms || 3200);
+  }
+  // De gast-Botty kan alleen heel-lichaams-animaties (de limb-animaties werken op id's
+  // die we bij het klonen weghalen). 'beweeg' en 'blij' bewegen het hele wrap-element.
+  function gastSpeel(klasse, ms){
+    var g = el("gast");
+    g.classList.remove("beweeg", "blij");
+    void g.offsetWidth;                 // herstart de animatie
+    g.classList.add(klasse);
+    setTimeout(function(){ g.classList.remove(klasse); }, ms);
+  }
+  function startBezoek(s){
+    if(!state.geboren || !s) return;
+    bezoekActief = true;
+    var gast = el("gast");
+    var oudeSvg = gast.querySelector("svg"); if(oudeSvg) oudeSvg.remove();
+    // look-klassen op de gast-wrap (vitaal/verwaarloosd) + naam-label
+    gast.className = "botty-wrap gast" + (s.lk==="vitaal"?" vitaal":"") + (s.lk==="verwaarloosd"?" verwaarloosd":"");
+    el("gast-naam").textContent = s.n + (s.z ? " 🤒" : "");
+    var svg = document.querySelector("#botty svg");
+    if(svg){
+      var c = svg.cloneNode(true);
+      var ids = c.querySelectorAll("[id]"); for(var i=0;i<ids.length;i++){ ids[i].removeAttribute("id"); }
+      c.style.setProperty("--groei", s.gr);
+      gast.insertBefore(c, gast.firstChild);   // svg onderaan, ballon/naam erbovenop
+    }
+    gast.style.display = "block";
+    void gast.offsetWidth;                       // reflow zodat de slide-in animeert
+    el("scene").classList.add("op-bezoek");       // host naar links, gast loopt in beeld
+    el("bezoek-tekst").textContent = huidigeT.bezoekTekst(s.n);
+    el("bezoek-balk").style.display = "";
+    sfx.goed();
+    // Begroeting nadat de gast is binnengelopen.
+    setTimeout(function(){
+      speel("blij", 1800, "blij");
+      zeg(huidigeT.zegWelkomGast(s.n), 3400);
+      setTimeout(function(){ gastSpeel("blij", 1600); gastZeg(huidigeT.gastHallo(), 3000); }, 500);
+    }, 1000);
+  }
+  // Samen spelen: beide Bottys huppelen, hartjes vliegen rond en de gastheer-Botty
+  // wordt er blijer van en bouwt band op (sociale zorg telt ook).
+  var samenTeller = 0;
+  function samenSpelen(){
+    if(!bezoekActief) return;
+    sfx.beweeg();
+    speel("blij", 2000, "blij");
+    gastSpeel("blij", 2000);
+    floater("💞", "#e0556b");
+    setTimeout(function(){ floater("✨", "#ffd54a"); }, 220);
+    state.geluk = klem(state.geluk + 8);
+    state.band  = klem(state.band + 5);
+    flitsBalk(".b-geluk"); flitsBalk(".b-band");
+    var jubel = huidigeT.jubel;
+    zeg(jubel[samenTeller % jubel.length], 2600);
+    gastZeg(["Jippie! 🎉","Hihi! 😄","Nog een keer! 🤸","Leuk! ✨"][samenTeller % 4], 2400);
+    samenTeller++;
+    bewaar(); render();
+  }
+  // Tot ziens: de gast zwaait en loopt het beeld weer uit, de host keert terug naar het midden.
+  function eindigBezoek(){
+    if(!bezoekActief) return;
+    bezoekActief = false;
+    gastZeg(huidigeT.gastTotziens, 2200);
+    zeg(huidigeT.zegTotZiens, 2800);
+    el("scene").classList.remove("op-bezoek");   // gast schuift uit beeld, host naar midden
+    var gast = el("gast");
+    setTimeout(function(){
+      gast.style.display = "none";
+      var svg = gast.querySelector("svg"); if(svg) svg.remove();
+      el("gast-ballon").classList.remove("toon");
+      el("bezoek-balk").style.display = "none";
+    }, 950);
+  }
+  el("btn-samenspelen").addEventListener("click", function(){ sfx.klik(); samenSpelen(); });
+  el("btn-totziens").addEventListener("click", function(){ sfx.klik(); eindigBezoek(); });
+
+  // ================= VOEREN =================
+  // voedsel comes from huidigeT.voedsel
+  function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;} return a; }
+
+  function vulKaarten(){
+    var voedsel = huidigeT.voedsel;
+    var goed = shuffle(voedsel.filter(function(v){return v.goed;})).slice(0,3);
+    var slecht = shuffle(voedsel.filter(function(v){return !v.goed;})).slice(0,1);
+    var set = shuffle(goed.concat(slecht));
+    var wrap = el("kaarten");
+    wrap.innerHTML = "";
+    set.forEach(function(v, i){
+      var nr = i + 1;                                  // toetsnummer 1..4
+      var d = document.createElement("button");        // echte knop → toetsenbord-/schermlezer-toegankelijk
+      d.type = "button";
+      d.className = "voerkaart";
+      d.setAttribute("aria-label", v.nm + " (toets " + nr + ")");
+      d.setAttribute("data-toets", nr);
+      d.innerHTML = '<span class="em">'+v.em+'</span><span class="nm">'+v.nm+'</span><span class="toets-nr" aria-hidden="true">'+nr+'</span>';
+      d.addEventListener("click", function(){
+        if(d.classList.contains("weg")) return;
+        d.classList.add("weg");
+        eet(v);
+      });
+      wrap.appendChild(d);
+    });
+  }
+  // Verwerkt één hapje data. 'doorAI' onderscheidt jouw zorg van de auto-piloot:
+  // alleen jíj bouwt band op (de AI niet), en de AI praat niet via de ballon.
+  function eet(v, doorAI){
+    speel("eet", 2800, "open");
+    sfx.eet();
+    telZorg(doorAI);                              // voeren is een delegeerbare zorgtaak
+    if(v.goed){                                   // duurzame data → meters omhoog
+      state.data = klem(state.data + 14);
+      state.energie = klem(state.energie + 11);
+      state.geluk = klem(state.geluk + 5);
+      state.band = klem(state.band + (doorAI?0:1));  // band alleen bij jóuw voeren
+      floater("+data", "#2f8f86");
+      if(!doorAI) zeg(huidigeT.zegDuurzaam, 2600);
+      setTimeout(sfx.goed, 200); sparkles(); flitsBalk(".b-data"); flitsBalk(".b-energie");
+    }else{                                        // vervuilde data → straf + kans op ziekte
+      state.data = klem(state.data - 6);
+      state.energie = klem(state.energie - 6);
+      state.geluk = klem(state.geluk - 12);          // geluk krijgt de grootste klap
+      floater("⚠ vervuild", "#c8472f");
+      zeg(huidigeT.zegVervuild, 2800);
+      setTimeout(sfx.fout, 200); schud();
+      if(Math.random() < 0.3) setTimeout(wordZiek, 900);  // 30% kans dat vervuilde data ziek maakt
+    }
+    bewaar(); render();
+  }
+  el("btn-voer").addEventListener("click", function(){ sfx.klik(); vulKaarten(); el("overlay-voer").classList.add("open"); });
+  el("sluit-voer").addEventListener("click", function(){ el("overlay-voer").classList.remove("open"); });
+
+  // ================= BEWEGEN =================
+  // Bewegen verhoogt fitheid/energie/geluk, maar kost een beetje data (denkkracht).
+  function beweegActie(doorAI){
+    speel("beweeg", 3000, "blij");
+    sfx.beweeg();
+    telZorg(doorAI);                                // bewegen is een delegeerbare zorgtaak
+    state.fit = klem(state.fit + 16);
+    state.energie = klem(state.energie + 12);
+    state.geluk = klem(state.geluk + 6);
+    state.data = klem(state.data - 3);              // lichte data-kost als tegenwicht
+    state.band = klem(state.band + (doorAI?0:1));   // band alleen bij jóuw zorg
+    floater("+fit", "#57b85f"); flitsBalk(".b-fit"); flitsBalk(".b-energie");
+    var bewegingen = huidigeT.bewegingen;
+    if(!doorAI) zeg(bewegingen[Math.floor(Math.random()*bewegingen.length)], 2800);
+    bewaar(); render();
+  }
+  el("btn-beweeg").addEventListener("click", function(){ beweegActie(false); });
+
+  // ================= DILEMMA'S =================
+  // dilemmas comes from huidigeT.dilemmas
+
+  var actiefDilemma = null;
+  function toonDilemma(){
+    var dilemmas = huidigeT.dilemmas;
+    actiefDilemma = dilemmas[Math.floor(Math.random()*dilemmas.length)];
+    el("dilemma-vraag").textContent = actiefDilemma.v;
+    el("dilemma-na").style.display = "none";
+    var wrap = el("dilemma-keuzes");
+    wrap.style.display = "flex";
+    wrap.innerHTML = "";
+    sfx.denk();
+    gezicht("verrast", 1100);
+    speel("denk", 999999, "neutraal");
+    actiefDilemma.keuzes.forEach(function(k, i){
+      var nr = i + 1;                                  // toetsnummer 1..3
+      var b = document.createElement("button");
+      b.className = "keuze";
+      b.setAttribute("aria-label", k.t + " (toets " + nr + ")");
+      b.textContent = k.t;
+      var badge = document.createElement("span");      // klein nummer rechtsonderin (na textContent toevoegen)
+      badge.className = "toets-nr"; badge.setAttribute("aria-hidden", "true"); badge.textContent = nr;
+      b.appendChild(badge);
+      b.addEventListener("click", function(){ kiesDilemma(k); });
+      wrap.appendChild(b);
+    });
+    el("overlay-dilemma").classList.add("open");
+  }
+  // Verwerkt een dilemma-keuze. Elke keuze heeft een gewicht k.w (0=fout, 1=bijna, 3=wijs)
+  // dat de wijsheid bepaalt; de reactie/kleur hieronder volgt datzelfde gewicht.
+  function kiesDilemma(k){
+    stopAnim();
+    telZorg(false);                             // jij beslist het dilemma zelf
+    state.wijs += k.w;                          // wijsheid stijgt met het gewicht van de keuze
+    state.band = klem(state.band + 1);          // samen nadenken versterkt de band
+    state.energie = klem(state.energie + 9);    // meedenken voedt Botty ook
+    if(k.w >= 3){ state.geluk = klem(state.geluk + 8); speel("blij", 2000, "blij"); floater("+wijsheid","#7b5bc4"); flitsBalk(".b-wijs"); setTimeout(sfx.goed,150); }       // wijze keuze → blij
+    else if(k.w === 0){ state.geluk = klem(state.geluk - 4); speel("sip", 1600, "sip"); setTimeout(sfx.fout,150); }  // foute keuze → teleurgesteld
+    else { sfx.klik(); }                        // tussenkeuze → neutraal
+    el("dilemma-keuzes").style.display = "none";
+    var na = el("dilemma-na");
+    var kleur = k.w >= 3 ? "#2f9e58" : (k.w === 0 ? "#c8472f" : "#f6a623");
+    var label = k.w >= 3 ? huidigeT.dilemmaWijs : (k.w === 0 ? huidigeT.dilemmaNog : huidigeT.dilemmaBijna);
+    el("dilemma-reactie").innerHTML = '<span class="label" style="background:'+kleur+'">'+label+'</span><br>'+k.r;
+    na.style.display = "block";
+    state.laatsteDilemma = nu();
+    bewaar(); render();
+  }
+  el("btn-dilemma").addEventListener("click", function(){ if(state.geboren) toonDilemma(); });
+  el("sluit-dilemma").addEventListener("click", function(){ el("overlay-dilemma").classList.remove("open"); });
+
+  // ================= SPONTANE BEWEGING =================
+  function spontaneBeweging(){
+    if(!state.geboren || huidigeAnim || modalOpen()) return;
+    var h=new Date().getHours();
+    if((h<8 || h>20) && Math.random()<0.5){ gezicht("slaap", 2200); zeg(huidigeT.zegGaap, 2200); return; }
+    var groetjes = huidigeT.groetjes;
+    if(Math.random() < 0.5){ speel("wuif", 1600, "blij"); if(Math.random()<0.6) zeg(groetjes[Math.floor(Math.random()*groetjes.length)], 2000); }
+    else { speel("kijk", 2000, "neutraal"); }
+  }
+
+  // ================= GEBOORTE + CONFETTI =================
+  function confetti(duur){
+    sfx.feest();
+    if(reduce){ return; }
+    var cv = document.createElement("canvas");
+    cv.style.cssText = "position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999;";
+    document.body.appendChild(cv);
+    var ctx = cv.getContext("2d");
+    function size(){ cv.width = window.innerWidth; cv.height = window.innerHeight; }
+    size();
+    var kleuren = ["#b52718","#1a5c4a","#2f8f86","#57b85f","#f6a623","#7b5bc4","#ffd54a"];
+    var stuks = [];
+    for(var i=0;i<170;i++){
+      stuks.push({x:Math.random()*cv.width, y:Math.random()*-cv.height,
+        vx:(Math.random()-0.5)*2.4, vy:2+Math.random()*4, g:0.05+Math.random()*0.05,
+        r:Math.random()*Math.PI, vr:(Math.random()-0.5)*0.3,
+        w:6+Math.random()*8, h:8+Math.random()*10, c:kleuren[Math.floor(Math.random()*kleuren.length)]});
+    }
+    var start = performance.now();
+    function frame(t){
+      var verstreken = t - start;
+      ctx.clearRect(0,0,cv.width,cv.height);
+      for(var i=0;i<stuks.length;i++){
+        var p = stuks[i];
+        p.vy += p.g; p.x += p.vx; p.y += p.vy; p.r += p.vr;
+        ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.r);
+        ctx.globalAlpha = verstreken > duur ? Math.max(0, 1-(verstreken-duur)/700) : 1;
+        ctx.fillStyle = p.c; ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+        ctx.restore();
+      }
+      if(verstreken < duur + 700){ requestAnimationFrame(frame); }
+      else { cv.remove(); window.removeEventListener("resize", size); }
+    }
+    requestAnimationFrame(frame);
+    window.addEventListener("resize", size);
+  }
+
+  var bezigBouwen = false;
+  el("start-ai").addEventListener("click", function(){
+    if(bezigBouwen) return;
+    bezigBouwen = true;
+    el("start-ai").disabled = true;
+    el("geb-titel").textContent = huidigeT.gebTitel2;
+    el("bouw-botty").classList.add("gebouwd");   // onderdelen klikken samen
+    setTimeout(function(){
+      confetti(2800);
+      el("geb-titel").textContent = huidigeT.gebTitel3;
+      el("geb-titel").classList.add("groot");
+      el("geboorte-gen").textContent = "Generatie " + state.generatie;
+      el("geboorte-gen").style.display = "";
+      el("geb-sub").style.display = "";
+      el("naam-input").style.display = "";
+      el("start-ai").style.display = "none";
+      el("start-knop").style.display = "";
+    }, 1500);
+  });
+
+  el("start-knop").addEventListener("click", function(){
+    var n = el("naam-input").value.trim();
+    state.naam = n || "Botty";
+    state.geboren = true;
+    state.geboortetijd = nu();
+    state.t = nu();
+    state.laatsteDilemma = nu();
+    state.data = 0; state.fit = 0; state.geluk = 0; state.wijs = 0; state.energie = 0; state.band = 0;
+    state.ziek = false; state.ziekSinds = 0; state.leegSinds = 0; state.stadium = "baby";
+    state.zorgAi = 0; state.zorgJij = 0;        // tellers voor het reflectiescherm op nul
+    el("ziek-balk").style.display = "none"; el("ziek-icoon").style.display = "none";
+    botty.classList.remove("ziek-look","vitaal","verwaarloosd");
+    vorigeGezondheid = null;
+    bewaar();
+    el("overlay-geboorte").classList.remove("open");
+    render();
+    pasGroeiToe();
+    bepaalGezondheid();
+    if(!state.tutorialKlaar){ setTimeout(startTut, 400); }
+    setTimeout(function(){ zeg(huidigeT.zegHoi(), 4500); }, 500);
+  });
+
+  // ================= LEVENSCYCLUS =================
+  // Leeftijd in minuten bepaalt het groeistadium en de schaal (groei) van de tekening.
+  // Grenzen: < 30 min baby, < 4 uur kind, < 24 uur tiener, daarna volwassen.
+  function stadium(){
+    var min = (nu() - state.geboortetijd)/60000;   // leeftijd in minuten
+    var sl = huidigeT.stadiumLabels;
+    if(min < 30)   return {key:"baby",      label:sl.baby,      groei:0.66};
+    if(min < 240)  return {key:"kind",      label:sl.kind,      groei:0.80};
+    if(min < 1440) return {key:"tiener",    label:sl.tiener,    groei:0.92};
+    return                {key:"volwassen", label:sl.volwassen,  groei:1.0};
+  }
+  // ================= SPRITE-WISSELING =================
+  // Baby en tiener krijgen een eigen SVG-sprite; kind en volwassen gebruiken de standaard.
+  var huidigeSprite = null;
+  var volwassenSvgHtml = null;
+
+  var babySvgHtml = `
+    <g id="antenne">
+      <path d="M100,8 Q96,-9 109,-16" fill="none" stroke="#2b2b2b" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="111" cy="-20" r="6.5" fill="#8c9196" stroke="#2b2b2b" stroke-width="2.5"/>
+      <path id="antenne-ster" class="lk-ster" d="M111,-29 L112.4,-24.4 117,-23 112.4,-21.6 111,-17 109.6,-21.6 105,-23 109.6,-24.4 Z" fill="#ffd54a" stroke="#f6a623" stroke-width="0.6" style="display:none"/>
+    </g>
+    <g id="been-l"><line x1="88" y1="204" x2="82" y2="228" stroke="#2b2b2b" stroke-width="4"/>
+      <ellipse cx="80" cy="231" rx="10" ry="5.5" fill="#fbfbf2" stroke="#2b2b2b" stroke-width="2.5"/></g>
+    <g id="been-r"><line x1="112" y1="204" x2="118" y2="228" stroke="#2b2b2b" stroke-width="4"/>
+      <ellipse cx="120" cy="231" rx="10" ry="5.5" fill="#fbfbf2" stroke="#2b2b2b" stroke-width="2.5"/></g>
+    <g id="arm-l"><line x1="66" y1="156" x2="44" y2="176" stroke="#2b2b2b" stroke-width="4"/>
+      <ellipse id="spier-l" class="lk-spier" cx="57" cy="163" rx="7" ry="5" fill="#57b85f" stroke="#2b2b2b" stroke-width="2" transform="rotate(-40 57 163)" style="display:none"/>
+      <circle cx="42" cy="179" r="6" fill="#2f8f86" stroke="#2b2b2b" stroke-width="2.5"/></g>
+    <g id="arm-r"><line x1="134" y1="156" x2="156" y2="176" stroke="#2b2b2b" stroke-width="4"/>
+      <ellipse id="spier-r" class="lk-spier" cx="143" cy="163" rx="7" ry="5" fill="#57b85f" stroke="#2b2b2b" stroke-width="2" transform="rotate(40 143 163)" style="display:none"/>
+      <circle cx="158" cy="179" r="6" fill="#2f8f86" stroke="#2b2b2b" stroke-width="2.5"/></g>
+    <rect x="71" y="197" width="58" height="24" rx="9" fill="#57b85f" stroke="#2e6b34" stroke-width="3"/>
+    <line x1="100" y1="210" x2="100" y2="221" stroke="#2e6b34" stroke-width="3"/>
+    <ellipse id="bochel" class="lk-bochel" cx="70" cy="150" rx="14" ry="10" fill="#e2e4da" stroke="#2b2b2b" stroke-width="3" style="display:none"/>
+    <rect x="67" y="148" width="66" height="42" rx="16" fill="#fbfbf2" stroke="#2b2b2b" stroke-width="3"/>
+    <rect x="83" y="157" width="34" height="18" rx="6" fill="#2f8f86" stroke="#2b2b2b" stroke-width="2.5"/>
+    <g id="roest" class="lk-roest" style="display:none">
+      <ellipse cx="76" cy="163" rx="5" ry="4" fill="#9c6a2f" opacity=".85"/>
+      <ellipse cx="122" cy="157" rx="4" ry="5" fill="#7a4f22" opacity=".8"/>
+      <ellipse cx="78" cy="178" rx="4.5" ry="3.5" fill="#a9682f" opacity=".8"/>
+      <ellipse cx="118" cy="180" rx="4" ry="4" fill="#8a5320" opacity=".82"/>
+      <circle cx="100" cy="185" r="3" fill="#9c6a2f" opacity=".75"/>
+    </g>
+    <path d="M93,130 q14,3 0,6 q-14,3 0,6" fill="none" stroke="#9aa0a4" stroke-width="4" stroke-linecap="round"/>
+    <g id="kop">
+      <circle cx="36" cy="70" r="18" fill="#2f8f86" stroke="#2b2b2b" stroke-width="2.5"/>
+      <circle cx="36" cy="70" r="8" fill="#bfe3df"/>
+      <circle cx="164" cy="70" r="18" fill="#2f8f86" stroke="#2b2b2b" stroke-width="2.5"/>
+      <circle cx="164" cy="70" r="8" fill="#bfe3df"/>
+      <path d="M72,10 Q36,12 36,70 Q36,116 72,132 Q100,142 128,132 Q164,116 164,70 Q164,12 128,10 Q100,4 72,10 Z" fill="#fbfbf2" stroke="#2b2b2b" stroke-width="3"/>
+      <path d="M76,58 Q100,52 124,58 Q136,62 130,78 L112,107 Q100,118 88,107 L70,78 Q64,62 76,58 Z" fill="#3a9d94" stroke="#2b8077" stroke-width="1.5"/>
+      <g id="ogen">
+        <line x1="90" y1="76" x2="90" y2="92" stroke="#1f2a28" stroke-width="5.5" stroke-linecap="round"/>
+        <line x1="110" y1="76" x2="110" y2="92" stroke="#1f2a28" stroke-width="5.5" stroke-linecap="round"/>
+      </g>
+      <g id="ogen-hart" style="display:none">
+        <path d="M90,90 C83,82 87,76 90,82 C93,76 97,82 90,90 Z" fill="#e0556b"/>
+        <path d="M110,90 C103,82 107,76 110,82 C113,76 117,82 110,90 Z" fill="#e0556b"/>
+      </g>
+      <g id="ogen-slaap" style="display:none">
+        <path d="M85,86 Q90,91 95,86" fill="none" stroke="#1f2a28" stroke-width="3.5" stroke-linecap="round"/>
+        <path d="M105,86 Q110,91 115,86" fill="none" stroke="#1f2a28" stroke-width="3.5" stroke-linecap="round"/>
+      </g>
+      <g id="ogen-verrast" style="display:none">
+        <circle cx="90" cy="84" r="5" fill="#1f2a28"/><circle cx="91.8" cy="82" r="1.4" fill="#fff"/>
+        <circle cx="110" cy="84" r="5" fill="#1f2a28"/><circle cx="111.8" cy="82" r="1.4" fill="#fff"/>
+      </g>
+      <path id="mond" d="M93,97 Q100,101 107,97 Q106,108 100,109 Q94,108 93,97 Z" fill="#15605a"/>
+    </g>`;
+
+  var tienerSvgHtml = `
+    <g id="antenne">
+      <path d="M100,46 Q96,28 109,20" fill="none" stroke="#2b2b2b" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="111" cy="16" r="6.5" fill="#8c9196" stroke="#2b2b2b" stroke-width="2.5"/>
+      <path id="antenne-ster" class="lk-ster" d="M111,1 L112.4,5.6 117,7 112.4,8.4 111,13 109.6,8.4 105,7 109.6,5.6 Z" fill="#ffd54a" stroke="#f6a623" stroke-width="0.6" style="display:none"/>
+    </g>
+    <g id="been-l"><line x1="86" y1="218" x2="76" y2="248" stroke="#2b2b2b" stroke-width="3.5"/>
+      <ellipse cx="74" cy="251" rx="11" ry="5.5" fill="#fbfbf2" stroke="#2b2b2b" stroke-width="2.5"/></g>
+    <g id="been-r"><line x1="114" y1="218" x2="124" y2="248" stroke="#2b2b2b" stroke-width="3.5"/>
+      <ellipse cx="126" cy="251" rx="11" ry="5.5" fill="#fbfbf2" stroke="#2b2b2b" stroke-width="2.5"/></g>
+    <g id="arm-l"><line x1="66" y1="155" x2="26" y2="202" stroke="#2b2b2b" stroke-width="3.5"/>
+      <ellipse id="spier-l" class="lk-spier" cx="50" cy="173" rx="8" ry="5.5" fill="#57b85f" stroke="#2b2b2b" stroke-width="2" transform="rotate(-44 50 173)" style="display:none"/>
+      <circle cx="24" cy="205" r="5.5" fill="#2f8f86" stroke="#2b2b2b" stroke-width="2.5"/></g>
+    <g id="arm-r"><line x1="134" y1="155" x2="174" y2="202" stroke="#2b2b2b" stroke-width="3.5"/>
+      <ellipse id="spier-r" class="lk-spier" cx="150" cy="173" rx="8" ry="5.5" fill="#57b85f" stroke="#2b2b2b" stroke-width="2" transform="rotate(44 150 173)" style="display:none"/>
+      <circle cx="176" cy="205" r="5.5" fill="#2f8f86" stroke="#2b2b2b" stroke-width="2.5"/></g>
+    <rect x="67" y="193" width="66" height="30" rx="10" fill="#57b85f" stroke="#2e6b34" stroke-width="3"/>
+    <line x1="100" y1="209" x2="100" y2="223" stroke="#2e6b34" stroke-width="3"/>
+    <ellipse id="bochel" class="lk-bochel" cx="72" cy="140" rx="17" ry="13" fill="#e2e4da" stroke="#2b2b2b" stroke-width="3" style="display:none"/>
+    <rect x="65" y="136" width="70" height="62" rx="20" fill="#fbfbf2" stroke="#2b2b2b" stroke-width="3"/>
+    <rect x="82" y="148" width="36" height="22" rx="7" fill="#2f8f86" stroke="#2b2b2b" stroke-width="2.5"/>
+    <g id="roest" class="lk-roest" style="display:none">
+      <ellipse cx="75" cy="158" rx="5" ry="4" fill="#9c6a2f" opacity=".85"/>
+      <ellipse cx="122" cy="152" rx="4" ry="5" fill="#7a4f22" opacity=".8"/>
+      <ellipse cx="77" cy="177" rx="4.5" ry="3.5" fill="#a9682f" opacity=".8"/>
+      <ellipse cx="118" cy="180" rx="4" ry="4" fill="#8a5320" opacity=".82"/>
+      <circle cx="100" cy="186" r="3" fill="#9c6a2f" opacity=".75"/>
+    </g>
+    <path d="M93,124 q14,4 0,7 q-14,4 0,7" fill="none" stroke="#9aa0a4" stroke-width="4" stroke-linecap="round"/>
+    <g id="kop">
+      <circle cx="52" cy="76" r="13" fill="#2f8f86" stroke="#2b2b2b" stroke-width="2.5"/>
+      <circle cx="52" cy="76" r="6" fill="#bfe3df"/>
+      <circle cx="148" cy="76" r="13" fill="#2f8f86" stroke="#2b2b2b" stroke-width="2.5"/>
+      <circle cx="148" cy="76" r="6" fill="#bfe3df"/>
+      <path d="M72,46 Q52,48 52,76 Q52,108 72,122 Q100,134 128,122 Q148,108 148,76 Q148,48 128,46 Q100,40 72,46 Z" fill="#fbfbf2" stroke="#2b2b2b" stroke-width="3"/>
+      <path d="M80,64 Q100,60 120,64 Q131,66 125,79 L107,106 Q100,115 93,106 L75,79 Q69,66 80,64 Z" fill="#3a9d94" stroke="#2b8077" stroke-width="1.5"/>
+      <g id="ogen">
+        <line x1="90" y1="78" x2="90" y2="90" stroke="#1f2a28" stroke-width="4.5" stroke-linecap="round"/>
+        <line x1="110" y1="78" x2="110" y2="90" stroke="#1f2a28" stroke-width="4.5" stroke-linecap="round"/>
+      </g>
+      <g id="ogen-hart" style="display:none">
+        <path d="M90,88 C83,81 87,75 90,80 C93,75 97,81 90,88 Z" fill="#e0556b"/>
+        <path d="M110,88 C103,81 107,75 110,80 C113,75 117,81 110,88 Z" fill="#e0556b"/>
+      </g>
+      <g id="ogen-slaap" style="display:none">
+        <path d="M85,84 Q90,88 95,84" fill="none" stroke="#1f2a28" stroke-width="3.5" stroke-linecap="round"/>
+        <path d="M105,84 Q110,88 115,84" fill="none" stroke="#1f2a28" stroke-width="3.5" stroke-linecap="round"/>
+      </g>
+      <g id="ogen-verrast" style="display:none">
+        <circle cx="90" cy="83" r="4.6" fill="#1f2a28"/><circle cx="91.6" cy="81.4" r="1.3" fill="#fff"/>
+        <circle cx="110" cy="83" r="4.6" fill="#1f2a28"/><circle cx="111.6" cy="81.4" r="1.3" fill="#fff"/>
+      </g>
+      <path id="mond" d="M93,97 Q100,101 107,97 Q106,108 100,109 Q94,108 93,97 Z" fill="#15605a"/>
+    </g>`;
+
+  function setSprite(stageKey){
+    var targetKey = (stageKey === "baby" || stageKey === "tiener") ? stageKey : "volwassen";
+    if(targetKey === huidigeSprite) return;
+    var svgEl = document.querySelector("#botty svg");
+    if(!svgEl) return;
+    if(volwassenSvgHtml === null) volwassenSvgHtml = svgEl.innerHTML;
+    var newHtml = targetKey === "baby" ? babySvgHtml
+                : targetKey === "tiener" ? tienerSvgHtml
+                : volwassenSvgHtml;
+    svgEl.innerHTML = newHtml;
+    huidigeSprite = targetKey;
+    mond = document.getElementById("mond");
+  }
+
+  function pasGroeiToe(){
+    var st = stadium();
+    setSprite(st.key);
+    var svg = document.querySelector("#botty svg");
+    if(svg) svg.style.setProperty("--groei", st.groei);
+    botty.classList.toggle("baby-look",   st.key === "baby");
+    botty.classList.toggle("kind-look",   st.key === "kind");
+    botty.classList.toggle("tiener-look", st.key === "tiener");
+  }
+
+  // ---------- Uiterlijk volgt de verzorging ----------
+  // Het gemiddelde welzijn bepaalt de look: > 65 = vitaal (spierballetjes, felle kleuren),
+  // < 35 = verwaarloosd (roest, bocheltje, slappe antenne). De eerste 45s na de geboorte
+  // blijft Botty neutraal, zodat een pasgeboren baby niet meteen roestig oogt. Springt ze
+  // omhoog naar 'vitaal', dan viert ze dat eenmalig met een blije animatie.
+  var vorigeGezondheid = null;
+  function bepaalGezondheid(){
+    if(!state.geboren){ botty.classList.remove("vitaal","verwaarloosd"); vorigeGezondheid = null; return; }
+    var gem = gemWelzijn();
+    var tier = gem > 65 ? "vitaal" : (gem < 35 ? "verwaarloosd" : "normaal");
+    if(tier === "verwaarloosd" && (nu() - state.geboortetijd) < 45000) tier = "normaal";  // geboorte-respijt
+    botty.classList.toggle("vitaal", tier === "vitaal");
+    botty.classList.toggle("verwaarloosd", tier === "verwaarloosd");
+    if(tier === "vitaal" && vorigeGezondheid && vorigeGezondheid !== "vitaal"){
+      if(!huidigeAnim && !modalOpen()){ speel("blij", 1600, "blij"); }
+      sparkles();
+      if(!modalOpen()) zeg("Kijk, ik word lekker sterk! 💪✨", 2600);
+    }
+    vorigeGezondheid = tier;
+  }
+  function updateStadium(){
+    if(!state.geboren) return;
+    var st = stadium();
+    if(st.key !== state.stadium){
+      state.stadium = st.key; bewaar();
+      zeg("Kijk, ik ben gegroeid! Nu ben ik " + st.label.replace(" 👶","") + "! 🎉", 3800);
+      sfx.feest(); sparkles(); gezicht("verliefd", 1600, "blij");
+    }
+    pasGroeiToe();
+  }
+
+  function wordZiek(){
+    if(state.ziek) return;
+    state.ziek = true; state.ziekSinds = nu(); bewaar();
+    el("ziek-balk").style.display = "";
+    el("ziek-icoon").style.display = "";
+    botty.classList.add("ziek-look");
+    zeg(huidigeT.zegBug, 4000);
+    sfx.fout();
+  }
+  function herstel(){
+    if(!state.ziek) return;
+    state.ziek = false; state.ziekSinds = 0;
+    state.geluk = klem(state.geluk + 12); state.energie = klem(state.energie + 8);
+    el("ziek-balk").style.display = "none";
+    el("ziek-icoon").style.display = "none";
+    botty.classList.remove("ziek-look");
+    speel("blij", 1600, "blij"); sfx.goed(); sparkles(); flitsBalk(".b-geluk");
+    zeg(huidigeT.zegGepatcht, 3000);
+    bewaar(); render();
+  }
+  el("btn-herstel").addEventListener("click", function(){ telZorg(false); herstel(); });   // jij verhelpt de bug
+
+  function doodTekst(oorzaak){ return huidigeT.doodTekst(oorzaak); }
+  function reflectieTekst(){
+    var totaal = state.zorgAi + state.zorgJij;
+    var band = Math.round(state.band);
+    if(totaal === 0) return huidigeT.reflectieLeeg;
+    var pctAi = Math.round(100 * state.zorgAi / totaal);
+    return huidigeT.reflectieTekst(pctAi, band);
+  }
+  function gaDood(oorzaak){
+    var leeftijd = leeftijdTekst();
+    state.geboren = false; state.ziek = false;
+    el("ziek-balk").style.display = "none";
+    el("ziek-icoon").style.display = "none";
+    botty.classList.remove("ziek-look");
+    el("einde-titel").textContent = naam() + huidigeT.eindeTitelSuffix;
+    el("einde-tekst").textContent = doodTekst(oorzaak);
+    var gewordentxt = huidigeLang === "en" ? ("Generation " + state.generatie + " · aged " + leeftijd) : ("Generatie " + state.generatie + " · " + leeftijd + " geworden");
+    el("einde-leeftijd").textContent = gewordentxt;
+    el("einde-reflectie").textContent = reflectieTekst();   // koppel automatisering aan de band
+    bewaar();
+    el("overlay-einde").classList.add("open");
+    sfx.einde();
+  }
+  // Controleert de drie manieren waarop een generatie kan eindigen, plus het ziek worden.
+  // Draait in de hoofdlus elke 3s; een 'return' na gaDood() stopt de rest van de checks.
+  function checkLeven(){
+    if(!state.geboren) return;
+    // 1) Ouderdom: na 7 dagen overlijdt Botty vredig, ongeacht de meters.
+    if(nu() - state.geboortetijd > 7*DAG){ gaDood("ouderdom"); return; }
+    // 2) Ziek worden door ernstige verwaarlozing (energie+geluk óf data+fit nagenoeg leeg): 15% kans per check.
+    if(!state.ziek && ((state.energie<=0 && state.geluk<=8) || (state.data<=0 && state.fit<=0))){
+      if(Math.random() < 0.15) wordZiek();
+    }
+    // 2b) Verwaarloosd (laag gemiddeld welzijn) maakt Botty extra vatbaar voor bugs.
+    var gemL = gemWelzijn();
+    if(!state.ziek && gemL < 30 && Math.random() < 0.05) wordZiek();
+    // 3) Ziekte langer dan 90 min onbehandeld → overlijden.
+    if(state.ziek && (nu() - state.ziekSinds > 90*60000)){ gaDood("ziekte"); return; }
+    // 4) Álle meters op 0: start een timer (leegSinds); na 120 min onafgebroken leeg → overlijden.
+    //    Zodra ook maar één meter weer boven 0 komt, wordt de timer gereset.
+    var leeg = (state.energie<=0 && state.data<=0 && state.fit<=0 && state.geluk<=0);
+    if(leeg){
+      if(!state.leegSinds) state.leegSinds = nu();
+      else if(nu() - state.leegSinds > 120*60000){ gaDood("verwaarlozing"); return; }
+    } else { state.leegSinds = 0; }
+  }
+
+  function resetGeboorte(){
+    bezigBouwen = false;
+    el("bouw-botty").classList.remove("gebouwd");
+    el("start-ai").disabled = false; el("start-ai").style.display = "";
+    el("start-knop").style.display = "none";
+    el("geb-titel").textContent = huidigeT.gebTitel1;
+    el("geb-titel").classList.remove("groot");
+    el("geboorte-gen").style.display = "none";
+    el("geb-sub").style.display = "none";
+    el("naam-input").style.display = "none"; el("naam-input").value = "";
+  }
+  el("nieuwe-gen").addEventListener("click", function(){
+    state.generatie += 1;
+    state.ziek = false; state.ziekSinds = 0; state.leegSinds = 0; state.stadium = "baby";
+    bewaar();
+    el("overlay-einde").classList.remove("open");
+    resetGeboorte();
+    el("overlay-geboorte").classList.add("open");
+  });
+
+  // ================= AI-ASSISTENT (niveaus van automatisering, naar Molenaar) =================
+  // state.aiNiveau: 0=uit, 1=signalering, 2=advisering, 3=gedeeltelijk, 4=voorwaardelijk, 5=volledig.
+  // De controle verschuift per niveau van jou naar de AI; de band groeit alleen door jóuw aandacht,
+  // dus hoe hoger het niveau, hoe minder ruimte er is om de band te laten groeien.
+  var aiTipGetoond = false;
+  // De zes niveaus komen uit huidigeT.aiNiveaus
+  function aiNiveaus(){ return huidigeT.aiNiveaus; }
+  function niveauNaam(n){ var niv=aiNiveaus(); return niv[n] ? niv[n].naam.toLowerCase() : "uit"; }
+  // Vult het info-blok in het paneel voor het getoonde niveau (los van wat actief is, voor live preview bij slepen).
+  function toonNiveauInfo(n){
+    var niv=aiNiveaus(); var info = niv[n]; if(!info) return;
+    el("ai-niv-tag2").textContent = info.tag;
+    el("ai-niv-titel").textContent = n + " · " + info.naam;
+    el("ai-niv-uitleg2").textContent = info.uitleg.replace(/Botty/g, naam());
+    el("ai-niv-band").textContent = (huidigeLang==="en"?"Bond: ":"Band: ") + info.band;
+    var t = el("ai-slider-ticks").children;                    // de tick onder de actieve stand oplichten
+    for(var i=0;i<t.length;i++){ t[i].classList.toggle("actief", i === n); }
+  }
+  function updateAiUI(){
+    var btn = el("ai-toggle");
+    var actief = state.aiNiveau > 0;
+    btn.classList.toggle("aan", actief);
+    el("ai-badge").textContent = actief ? state.aiNiveau : "";
+    btn.title = (huidigeLang === "en" ? "AI assistant: " : "AI-assistent: ") + niveauNaam(state.aiNiveau);
+    botty.classList.toggle("ai-zorg", state.aiNiveau >= 3);   // gloed alleen als de AI écht handelt
+    el("ai-slider").value = state.aiNiveau;                    // schuif gelijkzetten
+    toonNiveauInfo(state.aiNiveau);
+    el("xai-toggle").checked = !!state.uitlegbaar;
+    // De AI-ticker geeft de huidige stand van de assistent weer (look & feel uit de verse).
+    var niv=aiNiveaus(); var inf = niv[state.aiNiveau] || niv[0];
+    if(state.aiNiveau === 0) setTicker(huidigeT.aiTickerUit());
+    else setTicker(huidigeT.aiTickerAan(state.aiNiveau, inf));
+  }
+  // Schrijft een statusregel in de AI-ticker, met de knipperende cursor ervoor.
+  function setTicker(html){ var t = el("ai-ticker"); if(t) t.innerHTML = '<span class="knip">▌</span> ' + html; }
+  function aiZeg(t){ zeg(t, 2600); setTicker(t); }   // de AI 'praat' via de ballon én laat het in de ticker zien
+  function markeerKnop(id){ var b=el(id); if(!b) return; b.classList.add("ai-druk"); setTimeout(function(){ b.classList.remove("ai-druk"); }, 700); }
+
+  function aiVoer(){
+    markeerKnop("btn-voer");
+    var dataBefore = Math.round(state.data);
+    var goeden = voedsel.filter(function(v){ return v.goed; });
+    eet(goeden[Math.floor(Math.random()*goeden.length)], true);
+    aiZeg(huidigeT.aiVoerTekst(dataBefore));
+  }
+  function aiBeweeg(){
+    markeerKnop("btn-beweeg");
+    var fitBefore = Math.round(state.fit);
+    beweegActie(true);
+    aiZeg(huidigeT.aiBeweegTekst(fitBefore));
+  }
+  function aiHerstel(){
+    markeerKnop("btn-herstel");
+    telZorg(true); herstel();
+    aiZeg(huidigeT.aiHerstelTekst());
+  }
+  function aiTroost(){
+    gezicht("verliefd", 1300, "blij");
+    if(!huidigeAnim) speel("wuif", 1600, "blij");
+    hartjes(); sfx.aai();
+    var gelukBefore = Math.round(state.geluk);
+    state.geluk = klem(state.geluk + 6);          // wel blij, maar géén band (dat is jóuw taak)
+    aiZeg(huidigeT.aiTroostTekst(gelukBefore));
+    bewaar(); render();
+  }
+  function aiDilemma(){
+    var dilemmas = huidigeT.dilemmas;
+    var d = dilemmas[Math.floor(Math.random()*dilemmas.length)];
+    var beste = d.keuzes[0];
+    d.keuzes.forEach(function(k){ if(k.w > beste.w) beste = k; });
+    telZorg(true);                              // de AI besliste het dilemma zelf
+    state.wijs += beste.w; state.geluk = klem(state.geluk + 8);
+    markeerKnop("btn-dilemma");
+    speel("blij", 1800, "blij"); flitsBalk(".b-wijs"); sfx.goed();
+    aiZeg(huidigeT.aiDilemmaTekst(beste));
+    state.laatsteDilemma = nu(); bewaar(); render();
+  }
+  // Niveau 1 (signalering): de AI handelt NIET, maar licht alleen de knop op die aandacht nodig heeft.
+  // Geen tekstuele tip — alleen visuele aanwijzing. Hooguit één signaal per ~11s.
+  var laatsSignalering = 0;
+  function aiSignalering(){
+    if(nu() - laatsSignalering < 11000) return;
+    laatsSignalering = nu();
+    if(state.ziek){
+      markeerKnop("btn-herstel");
+      if(state.uitlegbaar) zeg(huidigeT.signaleringBug, 3000);
+      return;
+    }
+    var items=[["data",state.data],["energie",state.energie],["fit",state.fit]];
+    items.sort(function(a,b){ return a[1]-b[1]; });
+    if(items[0][1] >= 60) return;
+    if(items[0][0]==="fit"){
+      markeerKnop("btn-beweeg");
+      if(state.uitlegbaar) zeg(huidigeT.signaleringFit(Math.round(state.fit)), 3000);
+    } else {
+      markeerKnop("btn-voer");
+      var label = items[0][0]==="data" ? "Data" : "Energie";
+      if(state.uitlegbaar) zeg(huidigeT.signaleringData(label, Math.round(items[0][1])), 3000);
+    }
+  }
+
+  // Niveau 2 (advisering): de AI wijst de beste actie aan met een tip én laat de knop oplichten.
+  // Jij beslist en handelt. Hooguit één advies per ~11s, zodat het niet zeurt.
+  var laatsAdvies = 0;
+  function aiAdvies(){
+    if(nu() - laatsAdvies < 11000) return;
+    if(state.ziek){ laatsAdvies = nu(); markeerKnop("btn-herstel"); zeg(huidigeT.adviesBug(), 3200); return; }
+    var items=[["data",state.data],["energie",state.energie],["fit",state.fit],["geluk",state.geluk]];
+    items.sort(function(a,b){ return a[1]-b[1]; });
+    if(items[0][1] >= 60) return;                  // niets dringends → geen advies
+    laatsAdvies = nu();
+    var k = items[0][0], pct = Math.round(items[0][1]);
+    if(k==="fit"){ markeerKnop("btn-beweeg"); zeg(huidigeT.adviesFit(pct), 3200); }
+    else if(k==="geluk"){ zeg(huidigeT.adviesGeluk(pct), 3200); }
+    else { var lbl = k==="data"?"Data":"Energie"; markeerKnop("btn-voer"); zeg(huidigeT.adviesData(lbl, pct), 3200); }
+  }
+
+  // Eén stap van de assistent (loopt elke 4,5s). Het niveau bepaalt hoeveel de AI zélf doet:
+  //  1 = signaleren (knop) · 2 = adviseren (tip+knop) · 3 = voeren+bewegen · 4+ = volledige routinezorg.
+  function aiStap(){
+    if(state.aiNiveau < 1 || !state.geboren || modalOpen() || huidigeAnim || bezoekActief) return;  // niet ingrijpen tijdens modal/animatie/bezoek
+    if(state.aiNiveau === 1){ aiSignalering(); return; }  // niveau 1: alleen knop oplichten, jij handelt
+    if(state.aiNiveau === 2){ aiAdvies(); return; }       // niveau 2: tip + knop, jij handelt
+    // Bugs verhelpen hoort bij de volledige routinezorg (niveau 4+); op niveau 3 blijft dat jouw taak.
+    if(state.ziek && state.aiNiveau >= 4){ aiHerstel(); return; }
+    if(state.aiNiveau === 3){
+      // Gedeeltelijk: alleen de fysieke meters (data/energie/fit) via voeren en bewegen; geluk laat de AI aan jou.
+      var fys=[["data",state.data],["energie",state.energie],["fit",state.fit]];
+      fys.sort(function(a,b){ return a[1]-b[1]; });
+      if(fys[0][1] >= 80) return;
+      if(fys[0][0]==="fit") aiBeweeg(); else aiVoer();
+      return;
+    }
+    // Niveau 4 of 5: volledige routinezorg incl. welzijn. Láágste meter eerst aanvullen.
+    var items=[["data",state.data],["energie",state.energie],["fit",state.fit],["geluk",state.geluk]];
+    items.sort(function(a,b){ return a[1]-b[1]; });
+    if(items[0][1] >= 80) return;                 // zelfs de laagste ≥ 80 → alles op orde, AI rust
+    var k = items[0][0];                          // naam van de laagste meter
+    if(k==="fit") aiBeweeg();                      // fit laagst → bewegen
+    else if(k==="geluk") aiTroost();               // geluk laagst → troosten
+    else aiVoer();                                 // data of energie laagst → voeren
+  }
+
+  // Zet het automatiseringsniveau en legt de gevolgen uit. Vanaf niveau 3 neemt de AI taken over
+  // (en bouwt zelf geen band op) → eenmalige waarschuwing dat de band aan jóu hangt.
+  function setNiveau(n){
+    if(n === state.aiNiveau) return;
+    state.aiNiveau = n; bewaar(); updateAiUI();
+    zeg(huidigeT.berichten(n), 3600);
+    if(n >= 3 && !aiTipGetoond){ aiTipGetoond = true; setTimeout(function(){ toastMsg(huidigeT.toastAi); }, 1200); }
+    if(n >= 3) setTimeout(aiStap, 900);   // meteen een eerste verzorgstap, niet wachten op het interval
+  }
+  el("ai-toggle").addEventListener("click", function(){ sfx.klik(); updateAiUI(); el("overlay-ai").classList.add("open"); });
+  // Slepen toont live de uitleg (preview); loslaten/wijzigen zet het niveau echt.
+  el("ai-slider").addEventListener("input", function(){ toonNiveauInfo(+this.value); });
+  el("ai-slider").addEventListener("change", function(){ sfx.klik(); setNiveau(+this.value); });
+  el("sluit-ai").addEventListener("click", function(){ el("overlay-ai").classList.remove("open"); });
+  el("xai-toggle").addEventListener("change", function(){
+    state.uitlegbaar = this.checked; bewaar();
+    toastMsg(this.checked ? huidigeT.xaiAan : huidigeT.xaiUit);
+  });
+  setInterval(aiStap, 4500);   // assistent doet elke 4,5s hooguit één stap (advies of actie)
+
+  // ================= LUSSEN =================
+  // Hartslag (elke 3s): verval toepassen, leven controleren, groei + scherm bijwerken,
+  // en af en toe een spontaan klaagzinnetje als een meter laag staat.
+  var hartTik = 0;
+  setInterval(function(){
+    if(!state.geboren) return;
+    verval();
+    checkLeven();
+    if(!state.geboren){ render(); return; }   // net overleden in checkLeven() → alleen nog renderen
+    updateStadium();
+    render();
+    bepaalGezondheid();                        // look bijwerken op basis van het welzijn
+    // Niet elke 3s opslaan: verval wordt bij herladen toch uit de tijdstempel herberekend,
+    // dus periodiek bewaren (≈15s) volstaat. Acties zelf slaan al direct op.
+    if((++hartTik % 5) === 0) bewaar();
+    if(state.ziek && Math.random() < 0.3 && !modalOpen()){ zeg(huidigeT.zegZiek, 2800); }
+    // Hooguit één hint per ronde (else-if), alleen als er geen animatie/modal actief is.
+    // Een verwaarloosde Botty klaagt het eerst dat ze zich niet lekker voelt.
+    if(!huidigeAnim && !modalOpen()){
+      var gemH = gemWelzijn();
+      var zegNietLekker = huidigeT.zegNietLekker;
+      if(gemH < 35 && Math.random() < 0.3){ zeg(zegNietLekker[Math.floor(Math.random()*zegNietLekker.length)], 2800); }
+      else if(state.energie < 25 && Math.random() < 0.3){ zeg(huidigeT.zegEnergie, 2800); }
+      else if(state.data < 25 && Math.random() < 0.25){ zeg(huidigeT.zegHonger, 2600); }
+      else if(state.fit < 25 && Math.random() < 0.25){ zeg(huidigeT.zegBeweeg, 2600); }
+    }
+  }, 3000);
+
+  setInterval(spontaneBeweging, 12000);   // elke 12s een kans op een spontaan gebaartje
+
+  // Dilemma-lus: ten minste 75s na het vorige dilemma komt er een nieuw aanbod.
+  // Niveau 5 (volledig) → de AI beslist zelf. Niveau 4 (voorwaardelijk) → de AI vraagt jóu (vangnet).
+  // Niveau 0–3 → het dilemma is sowieso aan jou.
+  setInterval(function(){
+    if(!state.geboren || modalOpen() || bezoekActief) return;
+    if(nu() - state.laatsteDilemma > 75000){
+      state.laatsteDilemma = nu(); bewaar();
+      if(state.aiNiveau >= 5){ aiDilemma(); return; }    // volledige automatisering → AI beslist (wijs)
+      var vangnet = (state.aiNiveau === 4);              // AI verzorgt zelf maar geeft het dilemma aan jou terug
+      zeg(vangnet ? huidigeT.zegAiTwijfelt : huidigeT.zegDilemma, 2800);
+      setTimeout(function(){ if(!modalOpen()) toonDilemma(); }, 2600);  // korte aankondiging, dan de modal
+    }
+  }, 15000);
+
+  function humanizeDuur(ms){
+    var m=ms/60000, u=m/60, d=u/24;
+    if(d>=1) return huidigeT.humanizeDag(Math.floor(d));
+    if(u>=1) return huidigeT.humanizeUur(Math.floor(u));
+    return huidigeT.humanizeMin(Math.max(1,Math.floor(m)));
+  }
+  function dagdeelGroet(){
+    return huidigeT.dagdeelGroet(new Date().getHours());
+  }
+
+  // ================= TOEGANKELIJKHEID: modals met toetsenbord =================
+  // Dismissbare overlays gaan dicht met Escape of een klik op de achtergrond; de blokkerende
+  // flows (geboorte, levenseinde) niet. Bij openen verspringt de focus naar de modal en blijft
+  // Tab erbinnen (focus-trap); bij sluiten keert de focus terug naar waar je was.
+  var dismissbaar = { "overlay-voer":1, "overlay-dilemma":1, "overlay-share":1, "overlay-ai":1, "overlay-tutorial":1 };
+  var focusVoorModal = null;
+  function focusbaar(c){ return c.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select,textarea,[tabindex]:not([tabindex="-1"])'); }
+  function sluitModal(ov){
+    if(ov.id === "overlay-dilemma") stopAnim();                  // lopende denk-animatie netjes stoppen
+    if(ov.id === "overlay-tutorial"){ state.tutorialKlaar = true; bewaar(); }
+    ov.classList.remove("open");
+  }
+  Array.prototype.forEach.call(document.querySelectorAll(".overlay"), function(ov){
+    ov.addEventListener("click", function(e){ if(e.target === ov && dismissbaar[ov.id]) sluitModal(ov); });  // klik op achtergrond
+    // Reageert op élke manier van openen/sluiten (knop, Escape, code): focus verplaatsen/terugzetten.
+    new MutationObserver(function(){
+      var open = ov.classList.contains("open");
+      if(open && !ov.__open){ ov.__open = true; focusVoorModal = document.activeElement; var f = focusbaar(ov); if(f.length){ try{ f[0].focus(); }catch(e){} } }
+      else if(!open && ov.__open){ ov.__open = false; if(focusVoorModal && focusVoorModal.focus){ try{ focusVoorModal.focus(); }catch(e){} } focusVoorModal = null; }
+    }).observe(ov, { attributes:true, attributeFilter:["class"] });
+  });
+  document.addEventListener("keydown", function(e){
+    var ov = document.querySelector(".overlay.open"); if(!ov) return;
+    if(e.key === "Escape" && dismissbaar[ov.id]){ e.preventDefault(); sluitModal(ov); return; }
+    if(e.key === "Tab"){                                          // focus-trap binnen de open modal
+      var f = focusbaar(ov); if(!f.length) return;
+      var eerste = f[0], laatste = f[f.length-1];
+      if(e.shiftKey && document.activeElement === eerste){ e.preventDefault(); laatste.focus(); }
+      else if(!e.shiftKey && document.activeElement === laatste){ e.preventDefault(); eerste.focus(); }
+    }
+  });
+
+  // ================= SNELTOETSEN 1–4 =================
+  // Context-afhankelijk: staat de voer- of dilemma-modal open, dan kiezen 1–4 de genummerde optie.
+  // Anders (geen modal open): 1=voeren, 2=bewegen, 3=dilemma, 4=bug verhelpen.
+  document.addEventListener("keydown", function(e){
+    if(e.ctrlKey || e.metaKey || e.altKey) return;
+    var tag = (e.target && e.target.tagName) || "";
+    if(tag === "INPUT" || tag === "TEXTAREA") return;           // niet tijdens typen (bv. de naam)
+    var n = e.key;
+    if(n !== "1" && n !== "2" && n !== "3" && n !== "4") return;
+    var voer = el("overlay-voer"), dil = el("overlay-dilemma");
+    if(voer.classList.contains("open")){                        // voer-modal: kies de kaart met dat nummer
+      var kaart = voer.querySelector('.voerkaart[data-toets="' + n + '"]');
+      if(kaart && !kaart.classList.contains("weg")){ e.preventDefault(); kaart.click(); }
+      return;
+    }
+    if(dil.classList.contains("open")){                         // dilemma-modal: kies het antwoord (alleen tijdens de vraag)
+      if(el("dilemma-keuzes").style.display !== "none"){
+        var keuze = dil.querySelectorAll(".keuze")[(+n) - 1];
+        if(keuze){ e.preventDefault(); keuze.click(); }
+      }
+      return;
+    }
+    if(modalOpen() || !state.geboren) return;                   // andere modals open of nog niet geboren → niets
+    e.preventDefault();
+    if(n === "1") el("btn-voer").click();
+    else if(n === "2") el("btn-beweeg").click();
+    else if(n === "3") el("btn-dilemma").click();
+    else if(n === "4" && state.ziek) el("btn-herstel").click(); // alleen zinvol als er een bug is
+  });
+
+  // ---------- Taal-kiezer ----------
+  function startNaLang(){
+    var afwezig = state.geboren ? (nu() - state.t) : 0;
+    verval();
+    if(state.geboren) checkLeven();
+    render();
+    updateMuteIcon();
+    updateAiUI();
+    updateLucht();
+    planVolgendUur();
+    planVogels();
+    if(state.geboren){
+      pasGroeiToe();
+      bepaalGezondheid();
+      if(state.ziek){ el("ziek-balk").style.display=""; el("ziek-icoon").style.display=""; botty.classList.add("ziek-look"); }
+      if(!state.tutorialKlaar){ setTimeout(startTut, 500); }
+      var groet = dagdeelGroet();
+      var welkom = afwezig > 300000
+        ? huidigeT.welkomAfwezig(groet, humanizeDuur(afwezig))
+        : huidigeT.welkomTerug(groet);
+      setTimeout(function(){ zeg(welkom, 4200); }, 700);
+    } else if(!el("overlay-einde").classList.contains("open")){
+      el("overlay-geboorte").classList.add("open");
+    }
+    var gedeeld = leesGedeeld();
+    if(gedeeld){ toonGedeeld(gedeeld); }
+    bewaar();
+  }
+
+  function kiesTaal(lang){
+    schrijfRuw("botty-taal", lang);
+    setLang(lang);
+    el("overlay-taal").classList.remove("open");
+    startNaLang();
+  }
+
+  el("taal-nl").addEventListener("click", function(){ kiesTaal("nl"); });
+  el("taal-en").addEventListener("click", function(){ kiesTaal("en"); });
+
+  // ---------- Start ----------
+  var opgeslagenTaal = leesRuw("botty-taal");
+  if(opgeslagenTaal === "nl" || opgeslagenTaal === "en"){
+    setLang(opgeslagenTaal);
+    el("overlay-taal").classList.remove("open");
+    startNaLang();
+  } else {
+    // Toon de taal-picker; setLang wordt pas aangeroepen als de gebruiker kiest.
+    // We zetten alvast een standaardtaal zodat de vertaalfuncties niet crashen.
+    setLang("nl");
+    // Verberg geboorte-overlay totdat taal gekozen is.
+  }
+})();
+</script>
+</body>
+</html>
