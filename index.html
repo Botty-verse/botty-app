@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Botty — NOLAI AI-robot</title>
+  <meta name="description" content="Botty is de AI-robot van NOLAI. Speel met je eigen Botty, verzamel kaarten, verken de Botty-verse en download Botty voor je Badger2040." />
+  <meta name="theme-color" content="#1a5c4a" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://botty.ramonmoorlag.nl/" />
+  <meta property="og:title" content="Botty — NOLAI AI-robot" />
+  <meta property="og:description" content="Speel met je eigen Botty, verzamel kaarten, verken de Botty-verse." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --groen:  #1a5c4a;
+      --teal:   #2f8f86;
+      --rood:   #b52718;
+      --bg:     #f5f9f7;
+      --kaart:  #ffffff;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg);
+      font-family: 'Nunito', sans-serif;
+      color: #1a1a1a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* ── header ── */
+    header {
+      width: 100%;
+      padding: 1.4rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid #ddeee9;
+    }
+
+    .logo-text {
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--rood);
+    }
+
+    .header-links a {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--teal);
+      text-decoration: none;
+      margin-left: 1.4rem;
+    }
+    .header-links a:hover { text-decoration: underline; }
+
+    /* ── hero ── */
+    .hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 3.5rem 1.5rem 2rem;
+      text-align: center;
+      max-width: 700px;
+    }
+
+    .botty-img {
+      width: 180px;
+      height: 180px;
+      object-fit: contain;
+      margin-bottom: 1.6rem;
+      filter: drop-shadow(0 8px 24px rgba(47,143,134,.18));
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 6vw, 3.2rem);
+      font-weight: 900;
+      color: var(--groen);
+      line-height: 1.1;
+      margin-bottom: .7rem;
+    }
+
+    .hero p {
+      font-size: 1.05rem;
+      color: #4a7268;
+      max-width: 480px;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+
+    .cta {
+      display: inline-block;
+      background: var(--teal);
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 900;
+      padding: .85rem 2.2rem;
+      border-radius: 50px;
+      text-decoration: none;
+      transition: background .15s, transform .15s;
+      box-shadow: 0 4px 16px rgba(47,143,134,.25);
+    }
+    .cta:hover { background: var(--groen); transform: translateY(-2px); }
+
+    /* ── kaarten ── */
+    .kaarten {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.4rem;
+      width: 100%;
+      max-width: 900px;
+      padding: 2rem 1.5rem 3rem;
+    }
+
+    .kaart {
+      background: var(--kaart);
+      border-radius: 20px;
+      padding: 2rem 1.4rem 1.6rem;
+      text-align: center;
+      box-shadow: 0 2px 12px rgba(26,92,74,.08);
+      border: 2px solid #ddeee9;
+      text-decoration: none;
+      color: inherit;
+      transition: transform .15s, box-shadow .15s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .6rem;
+    }
+    .kaart:hover { transform: translateY(-4px); box-shadow: 0 8px 28px rgba(26,92,74,.14); }
+
+    .kaart-ico { font-size: 2.8rem; line-height: 1; }
+
+    .kaart h2 {
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: var(--groen);
+    }
+
+    .kaart p {
+      font-size: .88rem;
+      color: #5a7a72;
+      line-height: 1.5;
+    }
+
+    .kaart .tag {
+      font-size: .72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--teal);
+      background: #e8f5f3;
+      border-radius: 20px;
+      padding: .2rem .7rem;
+      margin-top: .2rem;
+    }
+
+    /* ── footer ── */
+    footer {
+      padding: 1.6rem 2rem;
+      font-size: .8rem;
+      color: #8aada6;
+      text-align: center;
+      border-top: 1px solid #ddeee9;
+      width: 100%;
+    }
+    footer a { color: var(--teal); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <span class="logo-text">NOLAI — Nationaal OnderwijsLab AI</span>
+    <nav class="header-links">
+      <a href="botty.html">Speel</a>
+      <a href="kaarten.html">Kaarten</a>
+      <a href="https://hive.ramonmoorlag.nl/">The Hive</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <img
+      src="https://raw.githubusercontent.com/moorlag/Kortebroeken/main/Kortebroek.jpeg"
+      alt="Botty de robot"
+      class="botty-img"
+      width="180" height="180"
+    />
+    <h1>Hoi, ik ben Botty! 🤖</h1>
+    <p>
+      Botty is de AI-robot van NOLAI. Geef haar data, laat haar bewegen
+      en los ethische dilemma's op. Hoe goed zorg jij voor een AI?
+    </p>
+    <a href="botty.html" class="cta">Speel met je eigen Botty →</a>
+  </section>
+
+  <section class="kaarten">
+
+    <a href="botty.html" class="kaart">
+      <span class="kaart-ico">🤖</span>
+      <h2>Speel met Botty</h2>
+      <p>Verzorg je eigen AI-robot. Geef data, beweeg en los dilemma's op. Groei van baby tot volwassen AI.</p>
+      <span class="tag">Tamagotchi</span>
+    </a>
+
+    <a href="kaarten.html" class="kaart">
+      <span class="kaart-ico">🃏</span>
+      <h2>Verzamelkaarten</h2>
+      <p>Ontdek de niveaus van automatisering en de emoties van Botty via unieke verzamelkaarten.</p>
+      <span class="tag">Collectie</span>
+    </a>
+
+    <a href="https://hive.ramonmoorlag.nl/" class="kaart">
+      <span class="kaart-ico">🌐</span>
+      <h2>The Hive — Singularity</h2>
+      <p>Jouw Botty maakt deel uit van een groter geheel. Verken de Botty-verse en ontmoet andere Bottys.</p>
+      <span class="tag">Botty-verse</span>
+    </a>
+
+    <a href="badger2040/botty.py" download class="kaart">
+      <span class="kaart-ico">📟</span>
+      <h2>Badger2040</h2>
+      <p>Download Botty voor de Pimoroni Badger2040 e-ink badge. Offline, MicroPython, op batterij.</p>
+      <span class="tag">Hardware</span>
+    </a>
+
+  </section>
+
+  <footer>
+    <p>Botty is een project van <a href="https://nolai.nl">NOLAI — Nationaal OnderwijsLab AI</a> &nbsp;·&nbsp; <a href="https://moorlag.github.io/Kortebroeken/">Kortebroekenweer?</a></p>
+  </footer>
+
+</body>
+</html>
