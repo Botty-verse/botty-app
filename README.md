@@ -1,6 +1,6 @@
 # Botty — NOLAI AI-robot
 
-**Botty** is an educational AI tamagotchi created by [NOLAI (Nationaal OnderwijsLab AI)](https://nolai.nl). She lives at [botty.ramonmoorlag.nl](https://botty.ramonmoorlag.nl).
+**Botty** is an educational AI tamagotchi based on the mascot at [NOLAI (Nationaal OnderwijsLab AI)](https://nolai.nl). She lives at [botty.ramonmoorlag.nl](https://botty.ramonmoorlag.nl).
 
 ---
 
@@ -60,7 +60,7 @@ Download `badger2040/botty.py` and copy it to the `examples/` folder on your [Pi
 
 ## Intent
 
-Botty was designed as a **classroom tool** for AI literacy education. The core pedagogical ideas:
+Botty was designed **gimmick** for AI literacy education. And the application was vibe coded and should not be taken very seriously. The core pedagogical ideas:
 
 - **AI needs care** — just like living things, AI systems require ongoing input (data), maintenance (training/fitness), and ethical oversight (dilemma resolution)
 - **Growth takes time** — Botty evolves through life stages, mirroring how real AI systems mature from narrow prototypes to capable systems
@@ -71,7 +71,7 @@ Botty was designed as a **classroom tool** for AI literacy education. The core p
 
 ## Part of NOLAI
 
-This project is part of [NOLAI — Nationaal OnderwijsLab AI](https://nolai.nl), a Dutch national initiative to develop and share AI literacy education for primary and secondary schools.
+This is not directly connected to NOLAI, it's products or it's views. It was developed in my spare time. 
 
 ---
 
