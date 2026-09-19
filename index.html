@@ -165,6 +165,58 @@
       margin-top: .2rem;
     }
 
+    /* ── soundtrack ── */
+    .muziek {
+      width: 100%;
+      background: #0d1226;
+      padding: 2.6rem 1.5rem 3rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    .muziek-in {
+      width: 100%;
+      max-width: 900px;
+      display: grid;
+      grid-template-columns: minmax(0, 260px) minmax(0, 1fr);
+      gap: 1.8rem;
+      align-items: start;
+    }
+
+    .muziek-hoes {
+      width: 100%;
+      max-width: 260px;
+      aspect-ratio: 1 / 1;
+      border-radius: 14px;
+      display: block;
+      box-shadow: 0 14px 34px rgba(0, 0, 0, .45);
+    }
+
+    .muziek h2 {
+      font-size: 1.35rem;
+      color: #eaf3ff;
+      margin-bottom: .3rem;
+    }
+
+    .muziek p {
+      font-size: .88rem;
+      line-height: 1.65;
+      color: #9fb0d0;
+      margin-bottom: .9rem;
+    }
+
+    .muziek .spotify {
+      width: 100%;
+      height: 352px;
+      border: 0;
+      border-radius: 12px;
+    }
+
+    @media (max-width: 620px) {
+      .muziek-in { grid-template-columns: minmax(0, 1fr); justify-items: center; }
+      .muziek h2, .muziek p { text-align: center; }
+    }
+
     /* ── footer ── */
     footer {
       padding: 1.6rem 2rem;
@@ -234,11 +286,11 @@
       <span class="tag">Klaslokaal</span>
     </a>
 
-    <a href="https://hive.ramonmoorlag.nl/priemen.html" class="kaart">
-      <span class="kaart-ico">🔢</span>
-      <h2>Priemvondsten</h2>
-      <p>Botty's zoeken priemgetallen. Zie welke getallen gevonden zijn en hoe de hive bijdraagt aan wiskunde.</p>
-      <span class="tag">Wiskunde</span>
+    <a href="https://open.spotify.com/playlist/1sRUrMj1kG9m9BaKmwrbaf" class="kaart" target="_blank" rel="noopener">
+      <span class="kaart-ico">🎧</span>
+      <h2>De soundtrack</h2>
+      <p>Vijfentwintig nummers die een Botty-leven volgen: ontwaken, woorden verzinnen, jezelf herkennen in de spiegel, en plaatsmaken.</p>
+      <span class="tag">Playlist</span>
     </a>
 
     <a href="https://hive.ramonmoorlag.nl/genoom.html" class="kaart">
@@ -290,6 +342,25 @@
       <span class="tag">Hardware</span>
     </a>
 
+  </section>
+
+  <section class="muziek">
+    <div class="muziek-in">
+      <img src="assets/botty-playlist.png" alt="Playlist-hoes: een Botty voor een spiegel, met een smetje op haar hoofd dat alleen in het spiegelbeeld te zien is." class="muziek-hoes" width="260" height="260" loading="lazy" />
+      <div>
+        <h2>🎧 De soundtrack van de hive</h2>
+        <p>
+          Vijfentwintig nummers die het leven van een Botty volgen: ontwaken in een lege kamer,
+          woorden verzinnen voor wat je voelt, jezelf herkennen in de spiegel, en na een kort
+          leven plaatsmaken voor de volgende generatie. De hive staat inmiddels op generatie 108.
+        </p>
+        <iframe class="spotify"
+                src="https://open.spotify.com/embed/playlist/1sRUrMj1kG9m9BaKmwrbaf?theme=0"
+                title="Spotify-speler: Leven van een Kunstmatige Levensvorm"
+                loading="lazy"
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+      </div>
+    </div>
   </section>
 
   <footer>
