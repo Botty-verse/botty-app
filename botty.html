@@ -534,12 +534,12 @@
 </style>
 </head>
 <body>
-  <p class="logo">NOLAI — Nationaal OnderwijsLab AI</p>
+  <p class="logo" data-nl="NOLAI — Nationaal OnderwijsLab AI">NOLAI — National Education Lab AI</p>
   <h1>Botty</h1>
   <p class="ondertitel">Voer haar duurzame data, laat haar bewegen en denk samen na.</p>
 
-  <div class="micro-kop" style="max-width:420px">AI-assistent</div>
-  <div class="ai-ticker" id="ai-ticker"><span class="knip">▌</span> AI-assistent staat uit — jij verzorgt Botty zelf.</div>
+  <div class="micro-kop" style="max-width:420px" data-nl="AI-assistent">AI assistant</div>
+  <div class="ai-ticker" id="ai-ticker" data-nl-html='<span class="knip">▌</span> AI-assistent staat uit — jij verzorgt Botty zelf.'><span class="knip">▌</span> AI assistant is off — you care for Botty yourself.</div>
 
   <main class="toestel">
     <div class="leefbalk">
@@ -554,7 +554,7 @@
     </div>
 
     <div class="stat-vol">
-      <div class="rij"><span>⚡ Energie</span><span id="t-energie">0%</span></div>
+      <div class="rij"><span data-nl="⚡ Energie">⚡ Energy</span><span id="t-energie">0%</span></div>
       <div class="balk b-energie"><span id="bar-energie" style="width:0%"></span></div>
     </div>
 
@@ -564,21 +564,21 @@
         <div class="balk b-data"><span id="bar-data" style="width:0%"></span></div>
       </div>
       <div class="stat">
-        <div class="rij"><span>🏃 Fitheid</span><span id="t-fit">0%</span></div>
+        <div class="rij"><span data-nl="🏃 Fitheid">🏃 Fitness</span><span id="t-fit">0%</span></div>
         <div class="balk b-fit"><span id="bar-fit" style="width:0%"></span></div>
       </div>
       <div class="stat">
-        <div class="rij"><span>😊 Geluk</span><span id="t-geluk">0%</span></div>
+        <div class="rij"><span data-nl="😊 Geluk">😊 Happiness</span><span id="t-geluk">0%</span></div>
         <div class="balk b-geluk"><span id="bar-geluk" style="width:0%"></span></div>
       </div>
       <div class="stat">
-        <div class="rij"><span>🧠 Wijsheid</span><span id="t-wijs">0</span></div>
+        <div class="rij"><span data-nl="🧠 Wijsheid">🧠 Wisdom</span><span id="t-wijs">0</span></div>
         <div class="balk b-wijs"><span id="bar-wijs" style="width:0%"></span></div>
       </div>
     </div>
 
     <div class="stat-vol">
-      <div class="rij"><span>❤️ Band met jou</span><span id="t-band">0%</span></div>
+      <div class="rij"><span data-nl="❤️ Band met jou">❤️ Bond with you</span><span id="t-band">0%</span></div>
       <div class="balk b-band"><span id="bar-band" style="width:0%"></span></div>
     </div>
 
@@ -664,12 +664,12 @@
     </div>
 
     <div class="ziek-balk" id="ziek-balk" style="display:none">
-      <span id="ziek-tekst">🤒 Botty heeft een bug!</span>
+      <span id="ziek-tekst" data-nl="🤒 Botty heeft een bug!">🤒 Botty has a bug!</span>
       <button id="btn-herstel">💊 Herstel <kbd class="toets-kbd">4</kbd></button>
     </div>
 
     <div class="bezoek-balk" id="bezoek-balk" style="display:none">
-      <span id="bezoek-tekst">🤖 is op bezoek!</span>
+      <span id="bezoek-tekst" data-nl="🤖 is op bezoek!">🤖 is visiting!</span>
       <button id="btn-samenspelen">🎉 Samen spelen</button>
       <button id="btn-totziens" class="licht">👋 Tot ziens</button>
     </div>
@@ -683,10 +683,10 @@
   </main>
 
   <nav class="voet-paneel" aria-label="Meer pagina's">
-    <span class="voet-kop">Meer in het Botty-universum</span>
-    <a class="terug" href="index.html">← terug naar de kortebroekenmeter</a>
-    <a class="terug" href="https://hive.ramonmoorlag.nl/">🌐 Botty-verse: de Singularity →</a>
-    <a class="terug" href="kaarten.html">🃏 Verzamelkaarten →</a>
+    <span class="voet-kop" data-nl="Meer in het Botty-universum">More in the Botty universe</span>
+    <a class="terug" href="index.html" data-nl="← terug naar de kortebroekenmeter">← back to the shorts-meter</a>
+    <a class="terug" href="https://hive.ramonmoorlag.nl/" data-nl="🌐 Botty-verse: de Singularity →">🌐 Botty-verse: the Singularity →</a>
+    <a class="terug" href="kaarten.html" data-nl="🃏 Verzamelkaarten →">🃏 Collectible cards →</a>
   </nav>
 
   <!-- Voer-modal -->
@@ -725,7 +725,7 @@
   <!-- Geboorte-modal -->
   <div class="overlay" id="overlay-geboorte">
     <div class="geboorte-inhoud">
-      <p class="geboorte-titel" id="geb-titel">Een stapel losse materialen…</p>
+      <p class="geboorte-titel" id="geb-titel" data-nl="Een stapel losse materialen…">A pile of loose materials…</p>
       <p class="geboorte-gen" id="geboorte-gen" style="display:none">Generatie 1</p>
       <div class="bouw-wrap">
         <svg id="bouw-botty" viewBox="0 0 200 250" aria-label="Botty wordt in elkaar gezet">
@@ -761,10 +761,10 @@
             <path d="M93,97 Q100,101 107,97 Q106,108 100,109 Q94,108 93,97 Z" fill="#15605a"/></g>
         </svg>
       </div>
-      <p class="geboorte-sub" id="geb-sub" style="display:none">Geef Botty een naam en een goede start! Zorg je goed voor haar — geef haar data, laat haar bewegen en los dilemma's op. Haar stemming (🧠) laat zien hoe ze zich écht voelt. Hoe meer bezoekers er zijn, hoe blijer ze wordt. Gaat ze goed mee, dan kan ze een nieuwe generatie starten!</p>
-      <input id="naam-input" class="naam-input" maxlength="14" placeholder="Geef je Botty een naam…" style="display:none" />
-      <button class="sluit start-ai" id="start-ai">🔧 START AI</button>
-      <button class="sluit" id="start-knop" style="display:none">Begin het avontuur!</button>
+      <p class="geboorte-sub" id="geb-sub" style="display:none" data-nl="Geef Botty een naam en een goede start! Zorg je goed voor haar — geef haar data, laat haar bewegen en los dilemma's op. Haar stemming (🧠) laat zien hoe ze zich écht voelt. Hoe meer bezoekers er zijn, hoe blijer ze wordt. Gaat ze goed mee, dan kan ze een nieuwe generatie starten!">Give Botty a name and a good start! Care for her well — give her data, let her move and solve dilemmas. Her mood (🧠) shows how she really feels. The more visitors there are, the happier she gets. If she does well, she can start a new generation!</p>
+      <input id="naam-input" class="naam-input" maxlength="14" placeholder="Give your Botty a name…" data-nl-ph="Geef je Botty een naam…" style="display:none" />
+      <button class="sluit start-ai" id="start-ai" data-nl="🔧 START AI">🔧 START AI</button>
+      <button class="sluit" id="start-knop" style="display:none" data-nl="Begin het avontuur!">Begin the adventure!</button>
     </div>
   </div>
 
@@ -772,12 +772,12 @@
   <div class="overlay" id="overlay-tutorial">
     <div class="modal">
       <span class="tut-emoji" id="tut-emoji">⚡</span>
-      <h2 id="tut-titel">Welkom!</h2>
+      <h2 id="tut-titel" data-nl="Welkom!">Welcome!</h2>
       <p class="vraag" id="tut-tekst"></p>
       <div class="tut-stippen" id="tut-stippen"></div>
       <div class="tut-nav">
-        <button class="sluit knop-licht" id="tut-vorige">Vorige</button>
-        <button class="sluit" id="tut-volgende">Volgende</button>
+        <button class="sluit knop-licht" id="tut-vorige" data-nl="Vorige">Back</button>
+        <button class="sluit" id="tut-volgende" data-nl="Volgende">Next</button>
       </div>
     </div>
   </div>
@@ -787,7 +787,7 @@
     <div class="modal">
       <div class="deelkaart">
         <div class="mini" id="share-botty"></div>
-        <div class="d-titel" id="share-naam">Mijn Botty</div>
+        <div class="d-titel" id="share-naam" data-nl="Mijn Botty">My Botty</div>
         <div class="d-regels" id="share-regels"></div>
       </div>
       <div class="deel-acties" style="margin-top:.9rem">
@@ -821,7 +821,7 @@
       <div class="ai-slider-wrap">
         <input type="range" id="ai-slider" min="0" max="5" step="1" value="0" aria-label="Automatiseringsniveau" />
         <div class="ai-slider-ticks" id="ai-slider-ticks">
-          <span>Uit</span><span>Signaal</span><span>Advies</span><span>Deels</span><span>Vangnet</span><span>Volledig</span>
+          <span data-nl="Uit">Off</span><span data-nl="Signaal">Signal</span><span data-nl="Advies">Advice</span><span data-nl="Deels">Partial</span><span data-nl="Vangnet">Safety net</span><span data-nl="Volledig">Full</span>
         </div>
       </div>
       <div class="ai-niv-info">
@@ -832,8 +832,10 @@
       </div>
       <p class="hint">Naar de niveaus van automatisering (Inge Molenaar). Lees meer via ❔ bovenin.</p>
       <label class="xai-rij" for="xai-toggle">
-        <span class="xai-lbl">🔍 Uitlegbare AI
+        <span class="xai-lbl" data-nl-html="🔍 Uitlegbare AI
           <small>Laat in de tekstballon zien waarom de AI handelt</small>
+        ">🔍 Explainable AI
+          <small>Show in the speech bubble why the AI acts</small>
         </span>
         <span class="toggle-sw">
           <input type="checkbox" id="xai-toggle" aria-label="Uitlegbare AI aan of uit" />
@@ -848,7 +850,7 @@
   <div class="overlay" id="overlay-einde">
     <div class="einde-inhoud">
       <div class="groot-emoji">💤</div>
-      <h2 id="einde-titel">Botty is uitgevallen</h2>
+      <h2 id="einde-titel" data-nl="Botty is uitgevallen">Botty has shut down</h2>
       <p class="sub" id="einde-tekst"></p>
       <p class="sub" id="einde-leeftijd"></p>
       <p class="einde-reflectie" id="einde-reflectie"></p>
@@ -1217,6 +1219,22 @@
   function setLang(lang){
     huidigeLang = lang;
     huidigeT = T[lang] || T.nl;
+    // Generieke sweep: vertaal statische elementen met data-nl / data-nl-html.
+    // Engels is de bron in de HTML; data-nl bevat de Nederlandse override.
+    document.querySelectorAll("[data-nl]").forEach(function(el){
+      if(!el.hasAttribute("data-en")) el.setAttribute("data-en", el.textContent);
+      el.textContent = (lang === "nl") ? el.getAttribute("data-nl") : el.getAttribute("data-en");
+    });
+    document.querySelectorAll("[data-nl-html]").forEach(function(el){
+      if(!el.hasAttribute("data-en-html")) el.setAttribute("data-en-html", el.innerHTML);
+      el.innerHTML = (lang === "nl") ? el.getAttribute("data-nl-html") : el.getAttribute("data-en-html");
+    });
+    [["data-nl-ph","placeholder","data-en-ph"],["data-nl-title","title","data-en-title"],["data-nl-aria","aria-label","data-en-aria"]].forEach(function(m){
+      document.querySelectorAll("["+m[0]+"]").forEach(function(el){
+        if(!el.hasAttribute(m[2])) el.setAttribute(m[2], el.getAttribute(m[1]) || "");
+        el.setAttribute(m[1], (lang === "nl") ? el.getAttribute(m[0]) : el.getAttribute(m[2]));
+      });
+    });
     // Update static HTML elements
     var ondertitelEl = document.querySelector(".ondertitel");
     if(ondertitelEl) ondertitelEl.textContent = huidigeT.ondertitel;
@@ -1431,7 +1449,7 @@
     el("t-fit").textContent  = Math.round(state.fit) + "%";
     el("t-geluk").textContent= Math.round(state.geluk) + "%";
     el("t-wijs").textContent = state.wijs;
-    el("leef-gen").textContent = state.geboren ? (naam() + " · Gen " + state.generatie) : ("Generatie " + state.generatie);
+    el("leef-gen").textContent = state.geboren ? (naam() + " · Gen " + state.generatie) : ((huidigeLang==="en"?"Generation ":"Generatie ") + state.generatie);
     el("leef-leeftijd").textContent = state.geboren ? (stadium().label + " · 🎂 " + leeftijdTekst()) : "—";
     stemming();
   }
@@ -2064,7 +2082,7 @@
       confetti(2800);
       el("geb-titel").textContent = huidigeT.gebTitel3;
       el("geb-titel").classList.add("groot");
-      el("geboorte-gen").textContent = "Generatie " + state.generatie;
+      el("geboorte-gen").textContent = (huidigeLang==="en"?"Generation ":"Generatie ") + state.generatie;
       el("geboorte-gen").style.display = "";
       el("geb-sub").style.display = "";
       el("naam-input").style.display = "";
