@@ -714,7 +714,7 @@
   </div>
 
   <!-- Taal-modal -->
-  <div class="overlay open" id="overlay-taal" style="z-index:1000">
+  <div class="overlay" id="overlay-taal" style="z-index:1000">
     <div class="modal" style="text-align:center;max-width:300px">
       <p style="font-size:18px;font-weight:900;color:var(--groen);margin-bottom:1.2rem">Kies je taal · Choose your language</p>
       <button class="sluit" id="taal-nl" style="width:100%;margin-bottom:.7rem;font-size:16px">🇳🇱 Nederlands</button>
@@ -864,7 +864,7 @@
 
   // ================= VERTALINGEN =================
   var huidigeT = null;
-  var huidigeLang = "nl";
+  var huidigeLang = "en";
   var T = {
     nl: {
       ondertitel: "Voer haar duurzame data, laat haar bewegen en denk samen na.",
@@ -1374,7 +1374,32 @@
     state.geluk = klem(state.geluk + (doel - state.geluk) * Math.min(1, dt*0.01));
     if(state.ziek) state.geluk = klem(state.geluk - dt*0.05);  // ziek-zijn drukt het geluk extra
     state.band = klem(state.band - dt*0.004);   // band vervaagt langzaam; groeit alleen door jóuw aandacht
+    aiOnderhoud(dt);                            // actieve AI-verzorger houdt de meters op peil (ook na afwezigheid)
     state.t = nu();                             // tijdstempel bijwerken voor de volgende ronde
+  }
+
+  // De live aiStap() grijpt alleen in op 4,5s-ticks en slaat over tijdens animaties, bezoek of een
+  // gesloten tabblad — terwijl het verval hierboven wél de echte verstreken tijd inhaalt. Zonder
+  // tegenwicht zakt Botty daardoor tóch weg (of gaat dood) ondanks een ingeschakelde assistent.
+  // aiOnderhoud() vult dat gat: zolang de AI verzorgt (niveau ≥ 3) houdt ze háár meters op een
+  // gezonde ondergrens over dezelfde tijd — en op niveau 4/5 regelt ze ook welzijn en verhelpt ze bugs.
+  function aiOnderhoud(dt){
+    if(state.aiNiveau < 3 || !state.geboren) return;   // pas vanaf 'gedeeltelijk' verzorgt de AI zelf
+    var vloer = 60;                                    // gezonde ondergrens die de assistent aanhoudt
+    state.data    = Math.max(state.data,    vloer);    // niveau 3+: fysieke meters (voeren)
+    state.fit     = Math.max(state.fit,     vloer);    // niveau 3+: fysieke meters (bewegen)
+    state.energie = Math.max(state.energie, vloer);
+    if(state.aiNiveau >= 4){
+      state.geluk = Math.max(state.geluk, vloer);      // volledige zorg regelt ook welzijn
+      // Bugs verhelpen: bij een echte tijdsprong (afwezigheid) of ruim vóór de 90-min-grens meteen
+      // stil verhelpen, zodat een blokkade in aiStap de ziekte nooit fataal laat worden.
+      if(state.ziek && (dt > 20 || (nu() - state.ziekSinds) > 60*60000)){
+        state.ziek = false; state.ziekSinds = 0;
+        el("ziek-balk").style.display = "none";
+        el("ziek-icoon").style.display = "none";
+        botty.classList.remove("ziek-look");
+      }
+    }
   }
 
   // ---------- DOM ----------
@@ -2658,18 +2683,41 @@
   el("taal-nl").addEventListener("click", function(){ kiesTaal("nl"); });
   el("taal-en").addEventListener("click", function(){ kiesTaal("en"); });
 
-  // ---------- Start ----------
-  var opgeslagenTaal = leesRuw("botty-taal");
-  if(opgeslagenTaal === "nl" || opgeslagenTaal === "en"){
-    setLang(opgeslagenTaal);
-    el("overlay-taal").classList.remove("open");
-    startNaLang();
-  } else {
-    // Toon de taal-picker; setLang wordt pas aangeroepen als de gebruiker kiest.
-    // We zetten alvast een standaardtaal zodat de vertaalfuncties niet crashen.
-    setLang("nl");
-    // Verberg geboorte-overlay totdat taal gekozen is.
+  // ---------- Vast vlaggetje: taal wisselen tijdens het spelen ----------
+  // Consistent met de andere pagina's: toont de vlag van de taal waar je NAARTOE switcht.
+  function bouwVlag(){
+    var f = document.createElement("button");
+    f.id = "lang-flag"; f.type = "button";
+    var s = f.style;
+    s.position="fixed"; s.top="10px"; s.right="10px"; s.zIndex="99999";
+    s.font="20px/1 sans-serif"; s.lineHeight="1"; s.background="rgba(0,0,0,.45)";
+    s.border="1px solid rgba(255,255,255,.4)"; s.borderRadius="10px";
+    s.padding="5px 8px"; s.cursor="pointer"; s.boxShadow="0 2px 8px rgba(0,0,0,.25)";
+    function ververs(){
+      var naarNL = huidigeLang === "en";
+      f.textContent = naarNL ? "🇳🇱" : "🇬🇧";
+      var label = naarNL ? "Schakel over naar Nederlands" : "Switch to English";
+      f.setAttribute("aria-label", label); f.title = label;
+    }
+    f.addEventListener("click", function(){
+      var nieuw = huidigeLang === "en" ? "nl" : "en";
+      schrijfRuw("botty-taal", nieuw);
+      setLang(nieuw);
+      ververs();
+    });
+    document.body.appendChild(f);
+    ververs();
   }
+
+  // ---------- Start ----------
+  // English-first: zonder opgeslagen keuze start het spel gewoon in het Engels
+  // (geen geforceerde taalkiezer meer); met het vlaggetje wissel je naar Nederlands.
+  var opgeslagenTaal = leesRuw("botty-taal");
+  var startTaal = (opgeslagenTaal === "nl" || opgeslagenTaal === "en") ? opgeslagenTaal : "en";
+  setLang(startTaal);
+  el("overlay-taal").classList.remove("open");
+  bouwVlag();
+  startNaLang();
 })();
 </script>
 </body>
