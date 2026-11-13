@@ -1019,8 +1019,8 @@
       gastHallo: function(){ return "Hallo "+naam()+"! 😊"; },
       gastTotziens: "Tot ziens! 👋",
       deelTekstFn: function(){ return "Mijn Botty heet "+naam()+" — "+leeftijdTekst()+" oud, Generatie "+state.generatie+", 🧠 wijsheid "+state.wijs+", ⚡ energie "+Math.round(state.energie)+"%. Speel ook mee bij NOLAI!"; },
-      gedeeldBadgeKan: function(sn){ return sn+" wil bij "+naam()+" op bezoek komen!<small>Laat de gast-Botty binnen — samen spelen maakt ze blij.</small>"; },
-      gedeeldBadgeNiet: function(sn){ return "🤖 "+sn+" deelt zijn Botty met je!<small>Start eerst je eigen Botty; dan kunnen ze op bezoek bij elkaar.</small>"; },
+      gedeeldBadgeKan: function(sn){ return deelTekstVeilig(sn)+" wil bij "+deelTekstVeilig(naam())+" op bezoek komen!<small>Laat de gast-Botty binnen — samen spelen maakt ze blij.</small>"; },
+      gedeeldBadgeNiet: function(sn){ return "🤖 "+deelTekstVeilig(sn)+" deelt zijn Botty met je!<small>Start eerst je eigen Botty; dan kunnen ze op bezoek bij elkaar.</small>"; },
       gekopieerd: "Gekopieerd! 📋",
       kopierenFout: "Kon niet kopiëren",
       kopierenNiet: "Kopiëren niet ondersteund",
@@ -1192,8 +1192,8 @@
       gastHallo: function(){ return "Hello "+naam()+"! 😊"; },
       gastTotziens: "Goodbye! 👋",
       deelTekstFn: function(){ return "My Botty is called "+naam()+" — "+leeftijdTekst()+" old, Generation "+state.generatie+", 🧠 wisdom "+state.wijs+", ⚡ energy "+Math.round(state.energie)+"%. Join in at NOLAI!"; },
-      gedeeldBadgeKan: function(sn){ return sn+" wants to visit "+naam()+"!<small>Let the guest Botty in — playing together makes them happy.</small>"; },
-      gedeeldBadgeNiet: function(sn){ return "🤖 "+sn+" is sharing their Botty with you!<small>Start your own Botty first; then they can visit each other.</small>"; },
+      gedeeldBadgeKan: function(sn){ return deelTekstVeilig(sn)+" wants to visit "+deelTekstVeilig(naam())+"!<small>Let the guest Botty in — playing together makes them happy.</small>"; },
+      gedeeldBadgeNiet: function(sn){ return "🤖 "+deelTekstVeilig(sn)+" is sharing their Botty with you!<small>Start your own Botty first; then they can visit each other.</small>"; },
       gekopieerd: "Copied! 📋",
       kopierenFout: "Could not copy",
       kopierenNiet: "Copy not supported",
@@ -1748,6 +1748,20 @@
   // Vult een deelkaart (eigen preview én de gedeelde kaart) op basis van een snapshot.
   // De gekloonde SVG krijgt een eigen .botty-wrap met de juiste look-klassen, zodat
   // de class-based look-CSS (vitaal/verwaarloosd) ook op de kloon werkt.
+  // Deellinks zijn onbetrouwbare invoer, ook na base64-decodering.
+  function deelTekstVeilig(value){
+    var span = document.createElement("span");
+    span.textContent = String(value == null ? "" : value);
+    return span.innerHTML;
+  }
+  function geldigSnapshot(s){
+    if(!s || typeof s !== "object" || Array.isArray(s)) return false;
+    var tekst = ["n", "lt", "sl", "sk", "lk"];
+    var getal = ["g", "gr", "w", "e", "d", "f", "gl", "b"];
+    return tekst.every(function(k){ return typeof s[k] === "string" && s[k].length <= 200; })
+      && getal.every(function(k){ return typeof s[k] === "number" && isFinite(s[k]) && s[k] >= 0; })
+      && (s.z === 0 || s.z === 1);
+  }
   function vulKaart(holder, naamEl, regelsEl, s){
     holder.innerHTML="";
     var svg=document.querySelector("#botty svg");
@@ -1758,9 +1772,10 @@
       c.style.setProperty("--groei", s.gr); wrap.appendChild(c); holder.appendChild(wrap);
     }
     naamEl.textContent = s.n + (s.z ? " 🤒" : "");
-    regelsEl.innerHTML = "🎂 "+s.lt+" oud · Generatie "+s.g+" · "+s.sl
-      + "<br>🧠 Wijsheid "+s.w+" · ⚡ Energie "+s.e+"%"
-      + "<br>🍃 Data "+s.d+"% · 🤸 Fit "+s.f+"% · 😊 Geluk "+s.gl+"% · 💞 Band "+s.b+"%";
+    regelsEl.textContent = "🎂 "+s.lt+" oud · Generatie "+s.g+" · "+s.sl
+      + "\n🧠 Wijsheid "+s.w+" · ⚡ Energie "+s.e+"%"
+      + "\n🍃 Data "+s.d+"% · 🤸 Fit "+s.f+"% · 😊 Geluk "+s.gl+"% · 💞 Band "+s.b+"%";
+    regelsEl.style.whiteSpace = "pre-line";
   }
 
   el("btn-share").addEventListener("click", function(){
@@ -1781,8 +1796,8 @@
   // dan negeren we de hash en start het normale spel.
   function leesGedeeld(){
     var m = (location.hash || "").match(/[#&]b=([^&]+)/);
-    if(!m) return null;
-    try{ var s = JSON.parse(b64dec(m[1])); return (s && typeof s.g === "number") ? s : null; }
+    if(!m || m[1].length > 4096) return null;
+    try{ var s = JSON.parse(b64dec(m[1])); return geldigSnapshot(s) ? s : null; }
     catch(e){ return null; }
   }
   var gedeeldeSnap = null;   // onthoudt wie er via de link langs wil komen
